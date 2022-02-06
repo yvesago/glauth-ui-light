@@ -4,6 +4,8 @@
 
 **glauth-ui-light** is a small golang web app to manage users and groups from the db files of [glauth ldap server](https://github.com/glauth/glauth) for small business, self hosted, labs infrastructure  or raspbery servers.
 
+[![Coverage Status](https://coveralls.io/repos/github/yvesago/glauth-ui-light/badge.svg?branch=main)](https://coveralls.io/github/yvesago/glauth-ui-light?branch=main)
+
 Thanks of hot-reload feature on glauth configuration file change, **glauth-ui-light** can edit and update glauth configuration and manage ldap users.
 
 **glauth-ui-light** update only users and groups. 
