@@ -42,7 +42,7 @@ Current glauth experimental feature on ``customattributes`` is lost due to the n
 - responsive UI
 - delayed after 4 failed login
 - rate requests limiter against brute force ttempts
-- csrf
+- CSRF
 - STS, CSP
 - standalone SSL or via reverse proxy
 - high tests coverage
@@ -55,10 +55,10 @@ Allow users to self change their passwords can create bad concurrent updates of 
 
 ## Install
 
-Download last release from https://github.com/yvesago/glauth-ui-light/releases
+**Download** last release from https://github.com/yvesago/glauth-ui-light/releases
 
 
-Create config file :
+**Create config file :**
 ```
 #######################
 # glauth-ui-light.conf
@@ -98,7 +98,10 @@ appdesc = "Manage users and groups for glauth ldap server"
 
 **Start :**
 ```
-$ ./glauth-ui -c glauth-ui-light.conf
+$ ./glauth-ui -c glauth-ui-light.conf &
+
+$ firefox http://localhost:8080/
+
 ```
 
 ## Usage
@@ -119,6 +122,7 @@ $ ./glauth-ui -c glauth-ui-light.conf
 ![Delete group](img/5-delgroup.png)
 
 **Responsive**
+
 ![Responsive](img/6-responsive.png)
 
 
@@ -162,7 +166,7 @@ ok  	glauth-ui-light/helpers	  18.048s # failed login tests need 18s
 ok  	glauth-ui-light/routes	  0.019s
 
 
-# test coverage                                                                                                            
+# test coverage
 $  go test -coverprofile=coverage.out ./... 
 
 $ go tool cover -func=coverage.out

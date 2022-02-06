@@ -1,0 +1,127 @@
+{{ define "user/edit.tmpl"}}
+{{ template "global/header.tmpl" .}}
+
+<form class="w-75 p-3" action="/auth/crud/user/{{ .u.UIDNumber }}" method="POST">
+  <input type="hidden" name="_method" value="PUT">
+  <input type="hidden" name="_csrf" value="{{ .Csrf }}">
+  <div class="row mb-3">
+    <label for="inputName" class="col-sm-2 col-form-label">{{ tr "Login" }}</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control {{ with .u.Errors.Name }}is-invalid{{ end }}" name="inputName" id="inputName" value="{{ .u.Name }}" required>
+      <div id="nameHelp1" class="form-text">{{ tr "Change with caution" }}</div>
+      <div id="nameHelp1" class="form-text">{{ tr "Mandatory" }}, {{ tr "lower case ASCII characters" }}, {{ tr "min 2" }}, {{ tr "max 16" }}</div>
+      {{ with .u.Errors.Name }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputGroup" class="col-sm-2 col-form-label">{{ tr "Group" }}</label>
+    <div class="col-sm-10">
+      <select class="form-select {{ with .u.Errors.PrimaryGroup }}is-invalid{{ end }} " name="inputGroup" id="inputGroup" aria-label="select primary group">
+	<option />
+	{{ range .groupdata }}
+        <option value="{{ .GIDNumber }}" {{if eq $.u.PrimaryGroup .GIDNumber}}selected{{end}}>{{.Name}}</option>
+	{{end}}
+      </select>
+      {{ with .u.Errors.GIDNumber }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputOtherGroup" class="col-sm-2 col-form-label">{{ tr "Others" }}</label>
+    <div class="col-sm-10">
+      <select class="form-select {{ with .u.Errors.OtherGroups }}is-invalid{{ end }}" multiple="" name="inputOtherGroup" id="inputOtherGroup" aria-label="multiple select other groups">
+	<option value="0"> </option>
+	{{ range .groupdata }}
+        <option value="{{ .GIDNumber }}" 
+         {{ with $t := .GIDNumber}}
+	  {{ range $k,$v := $.u.OtherGroups }}
+	    {{ if eq $v $t }}selected{{end}}
+          {{end}}
+         {{end}} >{{.Name}}</option>
+	{{end}}
+      </select>
+      {{ with .u.Errors.OtherGroups }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputSN" class="col-sm-2 col-form-label">{{ tr "Name" }}</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control {{ with .u.Errors.SN }}is-invalid{{ end }}" name="inputSN" id="inputSN" value="{{ .u.SN }}">
+      {{ with .u.Errors.SN }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputGivenName" class="col-sm-2 col-form-label">{{ tr "Surname" }}</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control {{ with .u.Errors.GivenName }}is-invalid{{ end }}" name="inputGivenName" id="inputGivenName" value="{{ .u.GivenName }}">
+      {{ with .u.Errors.GivenName }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputMail" class="col-sm-2 col-form-label">{{ tr "Mail" }}</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control {{ with .u.Errors.Mail }}is-invalid{{ end }}" name="inputMail" id="inputMail" value="{{ .u.Mail }}">
+      {{ with .u.Errors.Mail }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputDisabled" class="col-sm-2 col-form-label">{{ tr "Disabled" }}</label>
+    <div class="col-sm-10">
+      <input type="checkbox" class="check-input" name="inputDisabled" id="inputDisabled" {{if .u.Disabled }}checked{{end}}>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "Password" }}</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control {{ with .u.Errors.Password }}is-invalid{{ end }}" id="inputPassword" name="inputPassword">
+      {{ with .u.Errors.Password }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="container-fluid">
+   <div class="d-flex justify-content-between">
+    <button type="submit" class="btn btn-primary">{{ tr "Save" }}</button>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delModal">{{ tr "Delete" }}</button>
+   </div>
+  </div> 
+</form>
+
+
+<!-- Modal -->
+<div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="delModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="delModalLabel">{{ tr "Delete" }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{ tr "Delete" }} {{ .u.Name }}
+      </div>
+      <div class="modal-footer">
+	<form action="/auth/crud/user/del/{{ .u.UIDNumber }}" method="POST">
+  	<input type="hidden" name="_csrf" value="{{ .Csrf }}">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ tr "Close" }}</button>
+        <button type="submit" class="btn btn-danger">{{ tr "Delete" }}</button>
+	</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{{ template "global/footer.tmpl" .}}
+{{ end }}

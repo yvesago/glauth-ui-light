@@ -1,0 +1,22 @@
+{{ define "group/create.tmpl"}}
+{{ template "global/header.tmpl" .}}
+
+<form action="/auth/crud/group/create" method="POST">
+  <input type="hidden" name="_csrf" value="{{ .Csrf }}">
+  <input type="hidden" name="_method" value="POST">
+  <div class="row mb-3">
+    <label for="inputName" class="col-sm-2 col-form-label">{{ tr "Group" }}</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control {{ with .u.Errors.Name }}is-invalid{{ end }}" name="inputName" id="inputName" required>
+      <div id="nameHelp1" class="form-text">{{ tr "Mandatory" }}, {{ tr "Distinct" }}, {{ tr "lower case ASCII characters" }}, {{ tr "min 2" }}, {{ tr "max 16" }}</div>
+      {{ with .u.Errors.Name }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">{{ tr "Create" }}</button>
+</form>
+
+
+{{ template "global/footer.tmpl" .}}
+{{ end }}

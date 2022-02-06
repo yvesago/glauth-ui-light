@@ -1,0 +1,88 @@
+{{ define "global/header.tmpl" }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+ <!-- Latest compiled and minified CSS -->
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+</head>
+<body class="container">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand">{{ .title }}</span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+        {{ if .roleAdmin }}
+          <li class="nav-item"><a class="nav-link {{ if eq .currentPage "user" }} active {{ end }}" href="/auth/crud/user">[ {{ tr "Users" }}</a></li>
+          <li class="nav-item"><a class="nav-link {{ if eq .currentPage "group" }} active {{ end }}" href="/auth/crud/group">{{ tr "Groups" }} ]</a></li>
+          {{ else }}
+           {{ if .userId }}
+           <li class="nav-item"><a class="nav-link {{ if eq .currentPage "profile" }} active {{ end }}" href="/auth/user/{{ .userId }}">{{ tr "Profile" }}</a></li>
+           {{ end }}
+        {{ end }}
+      </ul> 
+      {{ if .lock }}
+      <ul class="navbar-nav ms-auto d-flex flex-row">
+        <li class="nav-item dropdown nav-pills">
+          <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+           {{ tr "Pending registration" }}: {{ .lock }}
+	</a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item{{if not .roleAdmin }} disabled{{end}}" href="/auth/crud/save">{{ tr "Register" }}</a></li>
+            <li><a class="dropdown-item{{if not .roleAdmin }} disabled{{end}}" href="/auth/crud/reload">{{ tr "Cancel" }}</a></li>
+          </ul>
+        </li>
+      </ul> 
+      {{ end }}
+      <ul class="navbar-nav ms-auto d-flex flex-row">
+        {{ if .userId }}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUserLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ tr "Account" }}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserLink">
+            <li class="nav-item"><a class="dropdown-item" href="/auth/user/{{ .userId }}">{{ .userName }} {{ tr "Profile" }}</a></li>
+            <li><a class="dropdown-item" href="/auth/logout">{{ tr "Logout" }}</a></li>
+          </ul>
+        </li>
+	{{ else }}
+        <li class="nav-item"><a class="nav-link {{ if eq .currentPage "login" }} active {{ end }}" href="/auth/login">{{ tr "Connection" }}</a></li>
+        {{ end }}
+      </ul>
+    </div>
+
+  </div>
+
+</nav>
+
+<br /><br />
+
+{{ if .success }}
+<div class="alert alert-success alert-dismissible" role="alert">
+  {{ .success }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{ end }}
+
+{{ if .warning }}
+<div class="alert alert-warning alert-dismissible" role="alert">
+  {{ .warning }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{ end }}
+
+{{ if .error }}
+<div class="alert alert-danger alert-dismissible" role="alert">
+  {{ .error }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{ end }}
+
+
+{{ end }}

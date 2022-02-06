@@ -1,0 +1,35 @@
+{{ define "user/list.tmpl"}}
+{{ template "global/header.tmpl" .}}
+
+<a class="btn btn-primary" href="/auth/crud/user/create" role="button">{{ tr "Add" }}</a>
+<div class="table-responsive">
+<table class="table table-striped table-hover">
+ <thead>
+ <tr>
+     <th scope="col">{{ tr "Login" }}</th>
+     <th scope="col">{{ tr "Groups" }}</th>
+     <th scope="col">{{ tr "Name" }}</th>
+     <th scope="col">{{ tr "Mail" }}</th>
+     <th scope="col">{{ tr "Enabled" }}</th>
+     <th scope="col"></th>
+ </tr>
+ </thead>
+ <tbody>
+  {{ range .userdata }}
+  <tr {{ if .Disabled }}class="table-warning"{{end}}>
+        <td>{{ .Name }}</td>
+	<td><strong> {{ (index $.hashgroups .PrimaryGroup) }}</strong>
+	<br /> {{range .OtherGroups}} {{ (index $.hashgroups .) }} {{end}}
+        </td>
+        <td>{{ .GivenName }} {{.SN}}</td>
+        <td>{{ .Mail }}</td>
+        <td>{{ if .Disabled }} <strong>{{ tr "No" }}</strong> {{else}} {{ tr "Yes" }} {{end}}</td>
+        <td><a class="nav-link" href="/auth/crud/user/{{ .UIDNumber }}">{{ tr "Edit" }}</a></td>
+  </tr>
+  {{ end }}
+ </tbody>
+</table>
+</div>
+
+{{ template "global/footer.tmpl" .}}
+{{ end }}

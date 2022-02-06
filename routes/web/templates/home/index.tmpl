@@ -1,0 +1,10 @@
+{{ define "home/index.tmpl"}}
+{{ template "global/header.tmpl" .}}
+
+<img src="/favicon.ico" class="float-start ms-3 me-4" alt="icon">
+<h2>{{ .appname }}</h2>
+<h4><small class="text-muted">{{ .appdesc }}</small></h4>
+
+{{ template "global/footer.tmpl" .}}
+{{ end }}
+

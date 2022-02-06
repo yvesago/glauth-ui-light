@@ -1,0 +1,52 @@
+{{ define "group/edit.tmpl"}}
+{{ template "global/header.tmpl" .}}
+
+<form class="w-75 p-3" action="/auth/crud/group/{{ .u.GIDNumber }}" method="POST">
+  <input type="hidden" name="_method" value="PUT">
+  <input type="hidden" name="_csrf" value="{{ .Csrf }}">
+  <div class="row mb-3">
+    <label for="inputName" class="col-sm-2 col-form-label">{{ tr "Group" }}</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control {{ with .u.Errors.Name }}is-invalid{{ end }}" name="inputName" id="inputName" value="{{ .u.Name }}" required>
+      <div id="nameHelp1" class="form-text">{{ tr "Change with caution" }}</div>
+      <div id="nameHelp1" class="form-text">{{ tr "Mandatory" }}, {{ tr "lower case ASCII characters" }}, {{ tr "min 2" }}, {{ tr "max 16" }}</div>
+      {{ with .u.Errors.Name }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="container-fluid">
+   <div class="d-flex justify-content-between">
+    <button type="submit" class="btn btn-primary">{{ tr "Save" }}</button>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delModal">{{ tr "Delete" }}</button>
+   </div>
+  </div> 
+</form>
+
+
+<!-- Modal -->
+<div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="delModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="delModalLabel">{{ tr "Delete" }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{ tr "Delete" }} {{ .u.Name }}
+      </div>
+      <div class="modal-footer">
+	<form action="/auth/crud/group/del/{{ .u.GIDNumber }}" method="POST">
+  	<input type="hidden" name="_csrf" value="{{ .Csrf }}">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ tr "Close" }}</button>
+        <button type="submit" class="btn btn-danger">{{ tr "Delete" }}</button>
+	</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{{ template "global/footer.tmpl" .}}
+{{ end }}

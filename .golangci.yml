@@ -1,0 +1,101 @@
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  goconst:
+    min-len: 2
+    min-occurrences: 5
+  gocritic:
+    disabled-checks:
+      - commentedOutCode
+    enabled-tags:
+      - diagnostic
+      #- style
+      - experimental
+      #- opinionated
+      - performance
+    settings: # settings passed to gocritic
+      rangeExprCopy:
+        sizeThreshold: 16
+      rangeValCopy:
+        sizeThreshold: 16
+  goimports:
+    local-prefixes: github.com/ayoisaiah/f2
+  govet:
+    check-shadowing: true
+   
+     
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - errorlint
+    - exportloopref
+    - exhaustive
+    - goconst
+    - godot
+    - gocritic
+    - gofmt
+    - goimports
+    - gocyclo
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - varcheck
+    - whitespace
+
+issues:
+  fix: true
+  exclude-rules:
+    - path: _test\.go # disable some linters for test files
+      linters:
+        - gocyclo
+        - gosec
+        - dupl
+    #- linters:
+    #  - gosec
+    #  text: "weak cryptographic primitive"
+    - linters:
+      - stylecheck
+      text: "error strings should not be capitalized"
+    - linters:
+       - stylecheck
+      text: "ST1003:"
+    - linters:
+       - stylecheck
+      text: "ST1001: should not use dot imports"
+    - linters:
+       - revive
+      text: "var-naming:"
+    - linters:
+       - revive
+      text: "dot-imports:"
+    - linters:
+      - errcheck
+      text: "Error return value is not checked"
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+run:
+  issues-exit-code: 1
