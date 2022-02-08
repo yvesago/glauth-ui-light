@@ -1,0 +1,12 @@
+Source: glauth-ui-light
+Maintainer: YvesAgo <yves+github@yvesago.net>
+Build-Depends: debhelper (>= 11)
+
+Package: glauth-ui-light
+Architecture: amd64
+Depends: adduser
+Description: web app to manage users and groups from glauth ldap server
+ glauth-ui-light is a small golang web app to manage users and groups from 
+ the db files of glauth ldap server for small business, self hosted, 
+ labs infrastructure or raspbery servers.
+ https://github.com/yvesago/glauth-ui-light

@@ -1,0 +1,18 @@
+--- a/Makefile
++++ b/Makefile
+@@ -1,3 +1,5 @@
++export GOROOT = /snap/go/current
++export GOBIN = /snap/go/current/bin/go
+ 
+ VERSION=$(shell git describe --abbrev=0 --tags)
+ 
+@@ -42,7 +44,8 @@
+ 	cat tr.tmp | sort | uniq > locales/tr.yml
+ 	rm tr.tmp
+ 
+-
++install:
++	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 ${GOBIN} build ${LDFLAGS} -o $(DESTDIR)/usr/bin/glauth-ui-light
+ 
+ all: build
+ 

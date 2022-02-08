@@ -1,0 +1,11 @@
+[Unit]
+Description=Glauth web
+After=network.target
+
+[Service]
+Type=simple
+User=glauth
+ExecStart=/usr/bin/nohup /usr/bin/glauth-ui-light -c /etc/glauth-ui/glauth-ui.cfg
+
+[Install]
+WantedBy=multi-user.target

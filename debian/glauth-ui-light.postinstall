@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    configure)
+        adduser --system --disabled-password --disabled-login --home /var/empty \
+                --no-create-home --quiet --force-badname --group glauth
+        chmod 755 /etc/glauth-ui
+        chmod 644 /etc/glauth-ui/*
+        chown glauth:glauth /etc/glauth-ui
+        chown glauth:glauth /etc/glauth-ui/*
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

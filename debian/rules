@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+
+DISTRIBUTION = "static"
+VERSION = 1.0.0
+PACKAGEVERSION = $(VERSION)-0~$(DISTRIBUTION)0
+
+%:
+	dh $@ --with quilt
+
+override_dh_auto_build:
+override_dh_auto_test:
+override_dh_installdocs:
+override_dh_auto_install:
+	$(MAKE) install DESTDIR=debian/glauth-ui-light
+
+override_dh_installsystemd:
+	dh_installsystemd --name=glauth-ui-light
+
+override_dh_gencontrol:
+	dh_gencontrol -- -v$(PACKAGEVERSION)
+
+
+# to keep logs in /var/log
+override_dh_install:
+	dh_install   #calls default *.install and *.dirs installation
+	install -d -o glauth -g glauth $(CURDIR)/debian/glauth-ui-light/var/log/glauth-ui 
+override_dh_fixperms:
+	dh_fixperms --exclude glauth-ui
+

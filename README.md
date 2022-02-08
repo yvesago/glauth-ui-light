@@ -55,7 +55,7 @@ Current glauth experimental feature on ``customattributes`` is lost due to the n
 
 Allow users to self change their passwords can create bad concurrent updates of glauth configuration file.
 
-## Install
+## Install binary
 
 **Download** last release from https://github.com/yvesago/glauth-ui-light/releases
 
@@ -106,6 +106,30 @@ $ firefox http://localhost:8080/
 
 ```
 
+## Install Debian package
+
+Download last deb file from https://github.com/yvesago/glauth-ui-light/releases
+
+```
+$ sudo dpkg -i glauth-ui-light_1.0.0-0~static0_amd64.deb
+
+$ systemctl status glauth-ui-light
+● glauth-ui-light.service - Glauth web
+   Loaded: loaded (/lib/systemd/system/glauth-ui-light.service; enabled; vendor preset: enabled)
+   Active: active (running) since Tue 2022-02-08 18:07:00 CET; 1s ago
+ Main PID: 8110 (glauth-ui-light)
+    Tasks: 5 (limit: 4915)
+   CGroup: /system.slice/glauth-ui-light.service
+           └─8110 /usr/bin/glauth-ui-light -c /etc/glauth-ui/glauth-ui.cfg
+
+# custom config
+$ vi /etc/glauth-ui/glauth-ui.cfg
+
+# logs
+$ tail -f /var/log/glauth-ui/app.20220208
+
+```
+
 ## Usage
 
 **Home**
@@ -144,7 +168,7 @@ Translate strings and add new local to config file
 ```
 
 
-## Build
+## Build binary
 
 ```
 $ git clone https://github.com/yvesago/glauth-ui-light.git
@@ -192,8 +216,24 @@ $ scp -pr locales admin@server:/home/app/glauth-ui-light
 $ scp build/linux/glauth-ui  admin@server:/home/app/glauth-ui-light
 ```
 
+## Build debian/ubuntu package
 
-Code structure:
+```
+$ apt install build-essential quilt
+
+$ git clone https://github.com/yvesago/glauth-ui-light.git
+$ cd glauth-ui-light
+
+$ debuild -us -uc -b
+
+# view content
+$ dpkg-deb -c ../glauth-ui-light_1.0.0-0~static0_amd64.deb
+
+# install
+$ sudo dpkg -i ../glauth-ui-light_1.0.0-0~static0_amd64.deb
+```
+
+### Code structure:
 ```
 main.go
 |-config
