@@ -293,10 +293,12 @@ https://etienner.github.io/connexion-deconnexion-avec-gin/
 
 https://www.alexedwards.net/blog/form-validation-and-processing
 
+https://vincent.bernat.ch/en/blog/2019-pragmatic-debian-packaging
+
 
 ## Changelog
 
-v1.0:
+v1.0.0:
   * initial release
 
 
