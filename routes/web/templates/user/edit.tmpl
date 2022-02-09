@@ -58,7 +58,7 @@
     </div>
   </div>
   <div class="row mb-3">
-    <label for="inputGivenName" class="col-sm-2 col-form-label">{{ tr "Surname" }}</label>
+    <label for="inputGivenName" class="col-sm-2 col-form-label">{{ tr "Givenname" }}</label>
     <div class="col-sm-10">
       <input type="text" class="form-control {{ with .u.Errors.GivenName }}is-invalid{{ end }}" name="inputGivenName" id="inputGivenName" value="{{ .u.GivenName }}">
       {{ with .u.Errors.GivenName }}
@@ -92,7 +92,7 @@
   </div>
   <div class="container-fluid">
    <div class="d-flex justify-content-between">
-    <button type="submit" class="btn btn-primary">{{ tr "Save" }}</button>
+    <button type="submit" class="btn btn-primary">{{ tr "Update" }}</button>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delModal">{{ tr "Delete" }}</button>
    </div>

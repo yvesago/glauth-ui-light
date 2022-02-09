@@ -34,7 +34,7 @@
            {{ tr "Pending registration" }}: {{ .lock }}
 	</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item{{if not .roleAdmin }} disabled{{end}}" href="/auth/crud/save">{{ tr "Register" }}</a></li>
+            <li><a class="dropdown-item{{if not .roleAdmin }} disabled{{end}}" href="/auth/crud/save">{{ tr "Commit changes" }}</a></li>
             <li><a class="dropdown-item{{if not .roleAdmin }} disabled{{end}}" href="/auth/crud/reload">{{ tr "Cancel" }}</a></li>
           </ul>
         </li>
