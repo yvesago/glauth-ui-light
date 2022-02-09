@@ -241,8 +241,10 @@ func UserUpdate(c *gin.Context) {
 	(&Data.Users[k]).GivenName = userf.GivenName
 	(&Data.Users[k]).Mail = userf.Mail
 	(&Data.Users[k]).Disabled = d
-	(&Data.Users[k]).PassSHA256 = "" // no more use of SHA256
-	(&Data.Users[k]).SetBcryptPass(userf.Password)
+	if userf.Password != "" { // optional set password
+		(&Data.Users[k]).PassSHA256 = "" // no more use of SHA256
+		(&Data.Users[k]).SetBcryptPass(userf.Password)
+	}
 
 	Lock++
 

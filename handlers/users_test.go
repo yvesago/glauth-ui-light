@@ -212,11 +212,12 @@ func TestUserHandlers(t *testing.T) {
 	assert.Equal(t, 1, len(matches), "1 result")
 
 	// Update one
+	// with old sha256 pass
+	Data.Users[0].PassSHA256 = "652c7dc687d98c9889304ed2e408c74b611e86a40caa51c4b43f1dd5913c5cd0"
 	fmt.Println("= http Update one User")
 	form = url.Values{}
 	form.Add("inputName", "user2")
 	form.Add("inputMail", "test@exemple.com")
-	form.Add("inputPassword", "somePass")
 	form.Add("inputGroup", "0")
 	form.Add("inputOtherGroup", "1")
 	form.Add("inputOtherGroup", "2")
@@ -228,9 +229,24 @@ func TestUserHandlers(t *testing.T) {
 	assert.Equal(t, 200, resp.Code, "http Update success")
 	assert.Equal(t, "user2", Data.Users[0].Name, "updated user2")
 	assert.Equal(t, "test@exemple.com", Data.Users[0].Mail, "new user2 mail")
+	assert.Equal(t, 64, len(Data.Users[0].PassSHA256), "don't  change sha256 pass")
+	assert.Equal(t, "", Data.Users[0].PassBcrypt, "no bcrypt, don't change sha256 pass")
+
+	fmt.Println("= http Update only Password")
+	form = url.Values{}
+	form.Add("inputName", "user2")            // Mandatory
+	form.Add("inputMail", "test@exemple.com") // to be set
+	form.Add("inputPassword", "somePass")
+	req, err = http.NewRequest("POST", Url+"/5001", strings.NewReader(form.Encode()))
+	req.PostForm = form
+	req.Header.Add("Content-Type", "application/x-www-form-Urlencoded")
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 200, resp.Code, "http Update success")
+	assert.Equal(t, "user2", Data.Users[0].Name, "updated user2")
+	assert.Equal(t, "test@exemple.com", Data.Users[0].Mail, "new user2 mail")
 	assert.Equal(t, "", Data.Users[0].PassSHA256, "no more sha256 pass")
 	assert.Equal(t, 120, len(Data.Users[0].PassBcrypt), "bcrypt pass length")
-	//fmt.Printf("%+v\n",Data.Users[0].PassBcrypt)
 
 	req, _ = http.NewRequest("GET", Url+"/5001", nil)
 	resp = httptest.NewRecorder()

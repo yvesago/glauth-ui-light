@@ -298,6 +298,11 @@ https://vincent.bernat.ch/en/blog/2019-pragmatic-debian-packaging
 
 ## Changelog
 
+v1.0.1:
+  * fix keep unchanged old sha256 password
+  * fix UI mistakes
+
+
 v1.0.0:
   * initial release
 
