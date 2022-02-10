@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 DISTRIBUTION = "static"
-VERSION = 1.0.0
+VERSION = $(shell git describe --abbrev=0 --tags | sed s/v//)
 PACKAGEVERSION = $(VERSION)-0~$(DISTRIBUTION)0
 
 %:
@@ -19,6 +19,9 @@ override_dh_installsystemd:
 override_dh_gencontrol:
 	dh_gencontrol -- -v$(PACKAGEVERSION)
 
+override_dh_clean:
+	# protect source .orig files
+	dh_clean -X _sample-simple.cfg.orig
 
 # to keep logs in /var/log
 override_dh_install:

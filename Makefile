@@ -26,6 +26,9 @@ build: $(PLATFORMS)
 
 # List binaries
 $(BINS):
+	@echo "=============="
+	@echo "Release text :"
+	@echo " ${VERSION}, git: ${BUILD}"
 	@sha256sum $@ 
 
 sha: $(BINS)
@@ -34,6 +37,19 @@ sha: $(BINS)
 clean:
 	rm -rf build/
 	@echo "Build cleaned"
+
+debclean:
+	@quilt pop
+	@dh clean
+
+deb:
+	debuild -us -uc -b
+	@mkdir -p build/linux/
+	cp debian/glauth-ui-light/usr/bin/glauth-ui-light build/linux/glauth-ui
+	@echo "=============="
+	@echo "Release text :"
+	@echo " ${VERSION}, git: ${BUILD}"
+	sha256sum debian/glauth-ui-light/usr/bin/glauth-ui-light
 
 tr:
 	@echo "shell is $$0"

@@ -176,6 +176,10 @@ $ git clone https://github.com/yvesago/glauth-ui-light.git
 $ cd glauth-ui-light
 
 $ make
+
+# to build binary AND debian/ubuntu package
+$ make deb
+
 ```
 
 Tests:
