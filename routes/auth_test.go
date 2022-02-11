@@ -60,6 +60,7 @@ func TestSession(t *testing.T) {
 			Start:         5000,
 			GIDAdmin:      6501,
 			GIDcanChgPass: 6500,
+			GIDuseOtp:      6501,
 		},
 		PassPolicy: PassPolicy{
 			AllowReadSSHA256: true,
@@ -101,6 +102,9 @@ func TestSession(t *testing.T) {
 	assert.Equal(t, 200, resp.Code, "http GET success admin login")
 	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "Welcome admin"), "http GET success first access admin")
 	assert.Equal(t, true, strings.Contains(resp.Body.String(), "class=\"navbar-brand\">admin</span>"), "http GET success first access user")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-otp\""), "show otp nav")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
+	//fmt.Printf("=====\n%+v\n",resp)
 
 	// serviceapp login
 	resp, cookie, location = testLogin(t, router, "serviceapp", "dogood")
@@ -108,6 +112,8 @@ func TestSession(t *testing.T) {
 	assert.Equal(t, 200, resp.Code, "http GET success serviceapp login")
 	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "Welcome serviceapp"), "http GET success first access serviceapp")
 	assert.Equal(t, true, strings.Contains(resp.Body.String(), "class=\"navbar-brand\">serviceapp</span>"), "http GET success first access user")
+	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-otp\""), "show otp nav")
+	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
 
 	// Admin access
 	fmt.Println("= Admin access")
@@ -132,6 +138,8 @@ func TestSession(t *testing.T) {
 	respA, _ = testAccess(t, router, "GET", Url+"/user/5000", usercookie)
 	assert.Equal(t, 200, respA.Code, "http GET user access to user profile")
 	assert.Equal(t, true, strings.Contains(respA.Body.String(), ">Change password</button>"), "http GET success allow Change pass")
+	assert.Equal(t, false, strings.Contains(respA.Body.String(), "id=\"nav-otp\""), "show otp nav")
+	assert.Equal(t, true, strings.Contains(respA.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
 
 	respA, url = testAccess(t, router, "GET", Url+"/user/5001", usercookie)
 	assert.Equal(t, 302, respA.Code, "http GET restrict user access to other profile")

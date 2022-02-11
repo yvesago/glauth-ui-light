@@ -69,6 +69,11 @@ func render(c *gin.Context, data gin.H, templateName string) {
 		data["canChgPass"] = canChgPass.(bool)
 	}
 
+	useOtp, _ := c.Get("UseOtp")
+	if canChgPass != nil {
+		data["useOtp"] = useOtp.(bool)
+	}
+
 	if data["success"] == nil {
 		data["success"] = helpers.GetFlashCookie(c, "success")
 	}

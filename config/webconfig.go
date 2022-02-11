@@ -52,6 +52,7 @@ type CfgUsers struct {
 	Start         int
 	GIDAdmin      int
 	GIDcanChgPass int
+	GIDuseOtp     int
 }
 
 type CfgGroups struct {

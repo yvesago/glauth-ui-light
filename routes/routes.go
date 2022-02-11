@@ -259,6 +259,7 @@ func Auth(rolectl string) gin.HandlerFunc {
 		cfg := c.MustGet("Cfg").(config.WebConfig)
 		GIDcanChgPass := cfg.CfgUsers.GIDcanChgPass
 		GIDAdmin := cfg.CfgUsers.GIDAdmin
+		GIDuseOtp := cfg.CfgUsers.GIDuseOtp
 		username, userid := GetUserID(c)
 		if username == "" || userid == "" {
 			Log.Info(fmt.Sprintf("%s -- NOK denied old or bad cookie", c.ClientIP()))
@@ -280,6 +281,10 @@ func Auth(rolectl string) gin.HandlerFunc {
 		c.Set("CanChgPass", false)
 		if contains(groups, GIDcanChgPass) || contains(groups, GIDAdmin) {
 			c.Set("CanChgPass", true)
+		}
+		c.Set("UseOtp", false)
+		if contains(groups, GIDuseOtp) {
+			c.Set("UseOtp", true)
 		}
 		c.Set("Login", username)
 		c.Set("LoginID", userid)

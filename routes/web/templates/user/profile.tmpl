@@ -7,6 +7,9 @@
     <button class="nav-link active" id="nav-chgpwd-tab" data-bs-toggle="tab" data-bs-target="#nav-chgpwd" type="button" role="tab" aria-controls="nav-chgpwd" aria-selected="true">{{ tr "Change password" }}</button>
     {{ end }}
     <button class="nav-link {{ if not .canChgPass }}active{{end}}" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">{{ tr "Profile" }}</button>
+    {{ if .useOtp }}
+    <button class="nav-link active" id="nav-otp-tab" data-bs-toggle="tab" data-bs-target="#nav-otp" type="button" role="tab" aria-controls="nav-otp" aria-selected="true">{{ tr "OTP" }}</button>
+    {{ end }}
   </div>
 </nav>
 
@@ -93,7 +96,17 @@
   </div>
 </form>
 </div>
+
+{{ if .useOtp }}
+<div class="tab-pane fade show active" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab">
+  <div class="row mb-3">
+    <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "OTP" }}</label>
+    <div class="col-sm-10">
+	OTP image
+    </div>
+  </div>
 </div>
+{{end}}
 
 {{ template "global/footer.tmpl" .}}
 {{ end }}

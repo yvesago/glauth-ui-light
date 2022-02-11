@@ -114,6 +114,7 @@ func TestUserHandlers(t *testing.T) {
 			Start:         5000,
 			GIDAdmin:      5501,
 			GIDcanChgPass: 5500,
+			GIDuseOtp:     5501,
 		},
 		PassPolicy: PassPolicy{
 			Min:              2,
@@ -386,8 +387,9 @@ func TestUserChgPass(t *testing.T) {
 		Verbose: false,
 		CfgUsers: CfgUsers{
 			Start:         5000,
-			GIDAdmin:      5501,
-			GIDcanChgPass: 5500,
+			GIDAdmin:      6501,
+			GIDcanChgPass: 6502,
+			GIDuseOtp: 6501,
 		},
 		PassPolicy: PassPolicy{
 			Min:              2,
@@ -447,6 +449,10 @@ func TestUserChgPass(t *testing.T) {
 	respA, resurl := testAccess(t, u, "GET", "/user/5000")
 	assert.Equal(t, 200, respA.Code, "http GET allow access to self profile")
 	assert.Equal(t, "/user/5000", resurl, "http GET profile")
+	assert.Equal(t, false, strings.Contains(respA.Body.String(), "id=\"nav-otp\""), "show otp nav")
+        assert.Equal(t, true, strings.Contains(respA.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
+	fmt.Printf("%+v\n",Data)
+	fmt.Printf("%+v\n",respA)
 
 	form2 = url.Values{}
 	form2.Add("inputPassword", "pass1")
