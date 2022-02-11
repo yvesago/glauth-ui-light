@@ -189,6 +189,7 @@ func initUsersValues() {
 		UIDNumber:    5000,
 		PrimaryGroup: 6501,
 		PassSHA256:   "6478579e37aff45f013e14eeb30b3cc56c72ccdc310123bcdf53e0333e3f416a",
+		OTPSecret:    "somelongrandomstring",
 	}
 	Data.Users = append(Data.Users, v1)
 	v2 := User{

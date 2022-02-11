@@ -8,6 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"encoding/base64"
+
+	"github.com/skip2/go-qrcode"
+	"github.com/xlzd/gotp"
+
 	. "glauth-ui-light/config"
 	. "glauth-ui-light/helpers"
 )
@@ -16,6 +21,7 @@ import (
 
 var rxEmail = regexp.MustCompile(".+@.+\\..+") //nolint
 var rxName = regexp.MustCompile("^[a-z0-9]+$")
+var rxASCII = regexp.MustCompile("^[A-Za-z0-9]+$")
 var rxBadChar = regexp.MustCompile("[<>&*%$'«».,;:!` ]+")
 
 type UserForm struct {
@@ -25,6 +31,7 @@ type UserForm struct {
 	SN           string
 	GivenName    string
 	Password     string
+	OTPSecret    string
 	PrimaryGroup int
 	OtherGroups  []int
 	Disabled     bool
@@ -51,8 +58,21 @@ func (msg *UserForm) Validate(cfg PassPolicy) bool {
 		}
 	}
 
+	o := msg.OTPSecret
+	matchAscii := rxASCII.MatchString(o)
+	if o != "" {
+		switch {
+		case len(o) < 16:
+			msg.Errors["OTPSecret"] = Tr(lang, "Too short")
+		case len(o) > 33:
+			msg.Errors["OTPSecret"] = Tr(lang, "Too long")
+		case !matchAscii:
+			msg.Errors["OTPSecret"] = Tr(lang, "Bad character")
+		}
+	}
+
 	n := msg.Name
-	matchAscii := rxName.MatchString(n)
+	matchName := rxName.MatchString(n)
 	switch {
 	case strings.TrimSpace(n) == "":
 		msg.Errors["Name"] = Tr(lang, "Mandatory")
@@ -60,7 +80,7 @@ func (msg *UserForm) Validate(cfg PassPolicy) bool {
 		msg.Errors["Name"] = Tr(lang, "Too short")
 	case len(n) > 16:
 		msg.Errors["Name"] = Tr(lang, "Too long")
-	case !matchAscii:
+	case !matchName:
 		msg.Errors["Name"] = Tr(lang, "Bad character")
 	}
 	for k := range Data.Users {
@@ -166,6 +186,7 @@ func UserEdit(c *gin.Context) {
 		SN:           u.SN,
 		GivenName:    u.GivenName,
 		Disabled:     u.Disabled,
+		OTPSecret:    u.OTPSecret,
 		Lang:         lang,
 	}
 
@@ -219,6 +240,7 @@ func UserUpdate(c *gin.Context) {
 		SN:           c.PostForm("inputSN"),
 		GivenName:    c.PostForm("inputGivenName"),
 		Password:     c.PostForm("inputPassword"),
+		OTPSecret:    c.PostForm("inputOTPSecret"),
 		PrimaryGroup: pg,
 		OtherGroups:  og,
 		Disabled:     d,
@@ -241,6 +263,7 @@ func UserUpdate(c *gin.Context) {
 	(&Data.Users[k]).GivenName = userf.GivenName
 	(&Data.Users[k]).Mail = userf.Mail
 	(&Data.Users[k]).Disabled = d
+	(&Data.Users[k]).OTPSecret = userf.OTPSecret
 	if userf.Password != "" { // optional set password
 		(&Data.Users[k]).PassSHA256 = "" // no more use of SHA256
 		(&Data.Users[k]).SetBcryptPass(userf.Password)
@@ -360,6 +383,15 @@ func UserProfile(c *gin.Context) {
 		GivenName:    u.GivenName,
 		Disabled:     u.Disabled,
 		Lang:         lang,
+	}
+
+	if u.OTPSecret != "" {
+		totp := gotp.NewDefaultTOTP(u.OTPSecret)
+		sec := totp.ProvisioningUri(u.Name, cfg.AppName)
+		var png []byte
+		png, _ = qrcode.Encode(sec, qrcode.Medium, 256)
+		img := base64.StdEncoding.EncodeToString(png)
+		userf.OTPSecret = img
 	}
 
 	render(c, gin.H{"title": u.Name, "u": userf, "currentPage": "profile", "groupdata": Data.Groups}, "user/profile.tmpl")

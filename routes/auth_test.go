@@ -54,13 +54,13 @@ func TestSession(t *testing.T) {
 		Debug:   true,
 		Verbose: false,
 		Sec: Sec{
-			CSRFrandom:  "secret",
+			CSRFrandom: "secret",
 		},
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      6501,
 			GIDcanChgPass: 6500,
-			GIDuseOtp:      6501,
+			GIDuseOtp:     6501,
 		},
 		PassPolicy: PassPolicy{
 			AllowReadSSHA256: true,

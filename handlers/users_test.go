@@ -58,6 +58,18 @@ func TestUserValidate(t *testing.T) {
 		assert.Equal(t, false, v, "bad Password form: "+tf.Errors["Password"])
 	}
 
+	for _, s := range []string{"va2ieYqsqeii;dafee8Gi0", "uuu nn", "Aee", "4S62BZNFXXSZLCRO4S62BZNFXXSZLCRO4S62BZNFXXSZ"} {
+		tf := UserForm{
+			Name:      "test",
+			OTPSecret: s,
+			Lang:      cfg.Locale.Lang,
+		}
+		v := tf.Validate(cfg.PassPolicy)
+		fmt.Printf(" test OTPSecret «%s» : %s\n", s, tf.Errors["OTPSecret"])
+		assert.Equal(t, true, len(tf.Errors["OTPSecret"]) > 0, "set OTPSecret error on: "+s)
+		assert.Equal(t, false, v, "bad OTPSecret form: "+tf.Errors["OTPSecret"])
+	}
+
 	userf := UserForm{
 		UIDNumber: -1,
 		Mail:      "sssss",
@@ -389,7 +401,7 @@ func TestUserChgPass(t *testing.T) {
 			Start:         5000,
 			GIDAdmin:      6501,
 			GIDcanChgPass: 6502,
-			GIDuseOtp: 6501,
+			GIDuseOtp:     6501,
 		},
 		PassPolicy: PassPolicy{
 			Min:              2,
@@ -443,16 +455,21 @@ func TestUserChgPass(t *testing.T) {
 	// Admin access
 	u := InitRouterTest(cfg)
 	u.Use(SetUserTest("user1", "5000", "admin"))
+	u.Use(func(c *gin.Context) {
+		c.Set("CanChgPass", true)
+		c.Set("UseOtp", true)
+		c.Next()
+	})
 	u.GET("/user/:id", UserProfile)
 	u.POST("/user/:id", UserChgPasswd)
 
 	respA, resurl := testAccess(t, u, "GET", "/user/5000")
 	assert.Equal(t, 200, respA.Code, "http GET allow access to self profile")
 	assert.Equal(t, "/user/5000", resurl, "http GET profile")
-	assert.Equal(t, false, strings.Contains(respA.Body.String(), "id=\"nav-otp\""), "show otp nav")
-        assert.Equal(t, true, strings.Contains(respA.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
-	fmt.Printf("%+v\n",Data)
-	fmt.Printf("%+v\n",respA)
+	assert.Equal(t, true, strings.Contains(respA.Body.String(), "id=\"nav-otp\""), "show otp nav")
+	assert.Equal(t, true, strings.Contains(respA.Body.String(), "OTP"), "show otp img")
+	assert.Equal(t, true, strings.Contains(respA.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
+	fmt.Printf("%+v\n", Data.Users[0])
 
 	form2 = url.Values{}
 	form2.Add("inputPassword", "pass1")

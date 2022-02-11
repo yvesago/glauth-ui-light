@@ -70,7 +70,7 @@ func render(c *gin.Context, data gin.H, templateName string) {
 	}
 
 	useOtp, _ := c.Get("UseOtp")
-	if canChgPass != nil {
+	if useOtp != nil {
 		data["useOtp"] = useOtp.(bool)
 	}
 

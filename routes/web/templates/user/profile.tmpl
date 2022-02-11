@@ -8,7 +8,7 @@
     {{ end }}
     <button class="nav-link {{ if not .canChgPass }}active{{end}}" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">{{ tr "Profile" }}</button>
     {{ if .useOtp }}
-    <button class="nav-link active" id="nav-otp-tab" data-bs-toggle="tab" data-bs-target="#nav-otp" type="button" role="tab" aria-controls="nav-otp" aria-selected="true">{{ tr "OTP" }}</button>
+    <button class="nav-link" id="nav-otp-tab" data-bs-toggle="tab" data-bs-target="#nav-otp" type="button" role="tab" aria-controls="nav-otp" aria-selected="false">{{ tr "OTP" }}</button>
     {{ end }}
   </div>
 </nav>
@@ -98,15 +98,19 @@
 </div>
 
 {{ if .useOtp }}
-<div class="tab-pane fade show active" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab">
+<div class="tab-pane fade" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab">
   <div class="row mb-3">
-    <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "OTP" }}</label>
+    <label for="inputOTPSecret" class="col-sm-2 col-form-label">&nbsp;</label>
     <div class="col-sm-10">
-	OTP image
+	<p>
+	  <img src="data:image/png;base64,{{.u.OTPSecret}}" alt="QrCode" />
+	  <p><strong>{{ .appname }}</strong> - {{.u.Name}}</p>
+	</p>
     </div>
   </div>
 </div>
 {{end}}
+</div>
 
 {{ template "global/footer.tmpl" .}}
 {{ end }}
