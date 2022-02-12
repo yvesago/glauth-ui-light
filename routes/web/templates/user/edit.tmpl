@@ -83,11 +83,20 @@
   </div>
   <div class="row mb-3">
     <label for="inputOTPSecret" class="col-sm-2 col-form-label">{{ tr "OTP" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control {{ with .u.Errors.OTPSecret }}is-invalid{{ end }}" id="inputOTPSecret" name="inputOTPSecret" value="{{ .u.OTPSecret }}">
       {{ with .u.Errors.OTPSecret }}
        <div class="invalid-feedback">{{ . }}</div>
       {{ end }}
+    </div>
+    <div class="col-lg-2">
+      <button type="button" class="btn btn-secondary" id="otpShow" name="otpShow" data-bs-toggle="modal" data-bs-target="#otpModal">{{ tr "Show QR code" }}</button>
+    </div>
+    <div class="col-lg-2">
+      <input type="button" id="submit" value={{ tr "New OTP" }} class="btn btn-warning" onClick="(function(){
+           $('#inputOTPSecret').val( (Math.random()*1e32).toString(30) );
+           $('#otpShow').addClass('disabled').prop('disabled', true);
+           return true; })();return false;">
     </div>
   </div>
   <div class="row mb-3">
@@ -107,6 +116,30 @@
    </div>
   </div> 
 </form>
+
+
+<!-- Modal OTP -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="otpModalLabel">{{ tr "OTP" }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <strong>{{ tr "Secret" }} :</strong>
+        {{ .u.OTPSecret }}
+        <p>
+          <img src="data:image/png;base64,{{.u.OTPImg}}" alt="QrCode" />
+          <p><strong>{{ .appname }}</strong> - {{.u.Name}}</p>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ tr "Close" }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Modal -->

@@ -32,6 +32,7 @@ type UserForm struct {
 	GivenName    string
 	Password     string
 	OTPSecret    string
+	OTPImg       string
 	PrimaryGroup int
 	OtherGroups  []int
 	Disabled     bool
@@ -190,6 +191,15 @@ func UserEdit(c *gin.Context) {
 		Lang:         lang,
 	}
 
+	if userf.OTPSecret != "" {
+		totp := gotp.NewDefaultTOTP(userf.OTPSecret)
+		sec := totp.ProvisioningUri(userf.Name, cfg.AppName)
+		var png []byte
+		png, _ = qrcode.Encode(sec, qrcode.Medium, 256)
+		img := base64.StdEncoding.EncodeToString(png)
+		userf.OTPImg = img
+	}
+
 	render(c, gin.H{"title": Tr(lang, "Edit user"), "currentPage": "user", "u": userf, "groupdata": Data.Groups}, "user/edit.tmpl")
 }
 
@@ -247,6 +257,14 @@ func UserUpdate(c *gin.Context) {
 		Lang:         lang,
 	}
 	// fmt.Printf("%+v\n", userf)
+	if userf.OTPSecret != "" {
+		totp := gotp.NewDefaultTOTP(userf.OTPSecret)
+		sec := totp.ProvisioningUri(userf.Name, cfg.AppName)
+		var png []byte
+		png, _ = qrcode.Encode(sec, qrcode.Medium, 256)
+		img := base64.StdEncoding.EncodeToString(png)
+		userf.OTPImg = img
+	}
 
 	// Validate entries
 	if !userf.Validate(cfg.PassPolicy) {
@@ -391,7 +409,7 @@ func UserProfile(c *gin.Context) {
 		var png []byte
 		png, _ = qrcode.Encode(sec, qrcode.Medium, 256)
 		img := base64.StdEncoding.EncodeToString(png)
-		userf.OTPSecret = img
+		userf.OTPImg = img
 	}
 
 	render(c, gin.H{"title": u.Name, "u": userf, "currentPage": "profile", "groupdata": Data.Groups}, "user/profile.tmpl")
@@ -428,6 +446,7 @@ func UserChgPasswd(c *gin.Context) {
 		SN:           u.SN,
 		GivenName:    u.GivenName,
 		Disabled:     u.Disabled,
+		OTPSecret:    u.OTPSecret,
 		Lang:         lang,
 	}
 	userf.Errors = make(map[string]string)
