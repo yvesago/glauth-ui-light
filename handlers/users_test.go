@@ -115,6 +115,7 @@ func TestUserHandlers(t *testing.T) {
 	defer resetData()
 
 	cfg := WebConfig{
+		AppName: "test",
 		DBfile: "sample-simple.cfg",
 		Locale: Locale{
 			Lang: "en",
@@ -234,7 +235,7 @@ func TestUserHandlers(t *testing.T) {
 	form.Add("inputGroup", "0")
 	form.Add("inputOtherGroup", "1")
 	form.Add("inputOtherGroup", "2")
-	form.Add("inputOTPSecret", "somelongrandomstring")
+	form.Add("inputOTPSecret", "gvxdgn3hpfvwu2lhmz3gmm3z")
 	req, err = http.NewRequest("POST", Url+"/5001", strings.NewReader(form.Encode()))
 	req.PostForm = form
 	req.Header.Add("Content-Type", "application/x-www-form-Urlencoded")
@@ -245,13 +246,13 @@ func TestUserHandlers(t *testing.T) {
 	assert.Equal(t, "test@exemple.com", Data.Users[0].Mail, "new user2 mail")
 	assert.Equal(t, 64, len(Data.Users[0].PassSHA256), "don't  change sha256 pass")
 	assert.Equal(t, "", Data.Users[0].PassBcrypt, "no bcrypt, don't change sha256 pass")
-	assert.Equal(t, true, strings.Contains(resp.Body.String(), "somelongrandomstring"), "OTP secret")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "gvxdgn3hpfvwu2lhmz3gmm3z"), "OTP secret")
 
 	fmt.Println("= http Update only Password")
 	form = url.Values{}
 	form.Add("inputName", "user2")            // Mandatory
 	form.Add("inputMail", "test@exemple.com") // to be set
-	form.Add("inputOTPSecret", "somelongrandomstring") // to be set
+	form.Add("inputOTPSecret", "gvxdgn3hpfvwu2lhmz3gmm3z") // to be set
 	form.Add("inputPassword", "somePass")
 	req, err = http.NewRequest("POST", Url+"/5001", strings.NewReader(form.Encode()))
 	req.PostForm = form
@@ -271,10 +272,10 @@ func TestUserHandlers(t *testing.T) {
 	re = regexp.MustCompile(`id="inputMail" value="(.*?)"`)
 	matches = re.FindAllStringSubmatch(resp.Body.String(), -1)
 	assert.Equal(t, 1, len(matches), "1 result for user")
-	fmt.Println(resp.Body)
+	//fmt.Println(resp.Body)
 	fmt.Printf("===\n%+v\n===\n", matches[0][1])
 	assert.Equal(t, "test@exemple.com", matches[0][1], "mail user2")
-	assert.Equal(t, true, strings.Contains(resp.Body.String(), "somelongrandomstring"), "OTP secret")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "gvxdgn3hpfvwu2lhmz3gmm3z"), "OTP secret")
 
 	// TEST good access
 	fmt.Println("= TEST good access")

@@ -94,7 +94,7 @@
     </div>
     <div class="col-lg-2">
       <input type="button" id="submit" value={{ tr "New OTP" }} class="btn btn-warning" onClick="(function(){
-           $('#inputOTPSecret').val( (Math.random()*1e32).toString(30) );
+           $('#inputOTPSecret').val( random_gen(24) );
            $('#otpShow').addClass('disabled').prop('disabled', true);
            return true; })();return false;">
     </div>
@@ -164,6 +164,23 @@
   </div>
 </div>
 
+
+<script src="/js/Nibbler.js" crossorigin="anonymous"></script>
+<script>
+  base32 = new Nibbler({
+    dataBits: 8,
+    codeBits: 5,
+    keyString: 'abcdefghijklmnopqrstuvwxyz234567',
+    pad: '='
+  });
+
+  function random_gen(length = 16) {
+    let random_str = (Math.random()*1e32).toString(36);
+    random_str = base32.encode(random_str);
+
+    return random_str.substring(0, length);
+  }
+</script>
 
 {{ template "global/footer.tmpl" .}}
 {{ end }}

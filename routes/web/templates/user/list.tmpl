@@ -23,7 +23,10 @@
         </td>
         <td>{{ .GivenName }} {{.SN}}</td>
         <td>{{ .Mail }}</td>
-        <td>{{ if .Disabled }} <strong>{{ tr "No" }}</strong> {{else}} {{ tr "Yes" }} {{end}}</td>
+        <td>
+          {{ if .Disabled }} <strong>{{ tr "No" }}</strong> {{else}} {{ tr "Yes" }} {{end}}
+          {{ with .OTPSecret }} &#128273; {{end}}
+        </td>
         <td><a class="nav-link" href="/auth/crud/user/{{ .UIDNumber }}">{{ tr "Edit" }}</a></td>
   </tr>
   {{ end }}

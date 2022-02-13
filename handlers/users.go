@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -8,10 +9,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"encoding/base32"
 	"encoding/base64"
+	"image/png"
 
-	"github.com/skip2/go-qrcode"
-	"github.com/xlzd/gotp"
+	"github.com/pquerna/otp"
 
 	. "glauth-ui-light/config"
 	. "glauth-ui-light/helpers"
@@ -21,7 +23,7 @@ import (
 
 var rxEmail = regexp.MustCompile(".+@.+\\..+") //nolint
 var rxName = regexp.MustCompile("^[a-z0-9]+$")
-var rxASCII = regexp.MustCompile("^[A-Za-z0-9]+$")
+
 var rxBadChar = regexp.MustCompile("[<>&*%$'«».,;:!` ]+")
 
 type UserForm struct {
@@ -40,78 +42,95 @@ type UserForm struct {
 	Lang         string
 }
 
-func (msg *UserForm) Validate(cfg PassPolicy) bool {
-	lang := msg.Lang
-	msg.Errors = make(map[string]string)
+func (userf *UserForm) CreateOTPimg(appname string) {
+	url := fmt.Sprintf("otpauth://totp/%s%%3A%s?secret=%s&issuer=%s", appname, userf.Name, userf.OTPSecret, appname)
+	if appname == "" {
+		fmt.Println("totp.Generate: Mandatory AppName")
+		return
+	}
+	key, _ := otp.NewKeyFromURL(url)
+	var buf bytes.Buffer
+	img, _ := key.Image(200, 200)
+	e := png.Encode(&buf, img)
+	if e != nil {
+		fmt.Println("png.Encode: " + e.Error())
+		return
+	}
+	userf.OTPImg = base64.StdEncoding.EncodeToString(buf.Bytes())
+}
 
-	match := rxEmail.MatchString(msg.Mail)
-	if msg.Mail != "" && !match {
-		msg.Errors["Mail"] = Tr(lang, "Please enter a valid email address")
+func (userf *UserForm) Validate(cfg PassPolicy) bool {
+	lang := userf.Lang
+	userf.Errors = make(map[string]string)
+
+	match := rxEmail.MatchString(userf.Mail)
+	if userf.Mail != "" && !match {
+		userf.Errors["Mail"] = Tr(lang, "Please enter a valid email address")
 	}
 
-	p := msg.Password
+	p := userf.Password
 	if p != "" {
 		switch {
 		case len(p) < cfg.Min:
-			msg.Errors["Password"] = Tr(lang, "Too short")
+			userf.Errors["Password"] = Tr(lang, "Too short")
 		case len(p) > cfg.Max:
-			msg.Errors["Password"] = Tr(lang, "Too long")
+			userf.Errors["Password"] = Tr(lang, "Too long")
 		}
 	}
 
-	o := msg.OTPSecret
-	matchAscii := rxASCII.MatchString(o)
+	o := userf.OTPSecret
 	if o != "" {
+		_, err := base32.StdEncoding.DecodeString(strings.ToUpper(o))
 		switch {
 		case len(o) < 16:
-			msg.Errors["OTPSecret"] = Tr(lang, "Too short")
+			userf.Errors["OTPSecret"] = Tr(lang, "Too short")
 		case len(o) > 33:
-			msg.Errors["OTPSecret"] = Tr(lang, "Too long")
-		case !matchAscii:
-			msg.Errors["OTPSecret"] = Tr(lang, "Bad character")
+			userf.Errors["OTPSecret"] = Tr(lang, "Too long")
+		case err != nil:
+			userf.Errors["OTPSecret"] = Tr(lang, "Wrong base32")
 		}
 	}
 
-	n := msg.Name
+	n := userf.Name
 	matchName := rxName.MatchString(n)
 	switch {
 	case strings.TrimSpace(n) == "":
-		msg.Errors["Name"] = Tr(lang, "Mandatory")
+		userf.Errors["Name"] = Tr(lang, "Mandatory")
 	case len(n) < 2:
-		msg.Errors["Name"] = Tr(lang, "Too short")
+		userf.Errors["Name"] = Tr(lang, "Too short")
 	case len(n) > 16:
-		msg.Errors["Name"] = Tr(lang, "Too long")
+		userf.Errors["Name"] = Tr(lang, "Too long")
 	case !matchName:
-		msg.Errors["Name"] = Tr(lang, "Bad character")
+		userf.Errors["Name"] = Tr(lang, "Bad character")
 	}
 	for k := range Data.Users {
-		if Data.Users[k].Name == n && Data.Users[k].UIDNumber != msg.UIDNumber {
-			msg.Errors["Name"] = Tr(lang, "Name already used")
+		if Data.Users[k].Name == n && Data.Users[k].UIDNumber != userf.UIDNumber {
+			userf.Errors["Name"] = Tr(lang, "Name already used")
 			break
 		}
 	}
 
-	matchBadSN := rxBadChar.MatchString(msg.SN)
-	if msg.SN != "" && len(msg.SN) > 32 {
-		msg.Errors["SN"] = Tr(lang, "Too long")
+	matchBadSN := rxBadChar.MatchString(userf.SN)
+	if userf.SN != "" && len(userf.SN) > 32 {
+		userf.Errors["SN"] = Tr(lang, "Too long")
 	}
-	if msg.SN != "" && matchBadSN {
-		msg.Errors["SN"] = Tr(lang, "Bad character")
-	}
-
-	matchBadGname := rxBadChar.MatchString(msg.GivenName)
-	if msg.GivenName != "" && len(msg.GivenName) > 32 {
-		msg.Errors["GivenName"] = Tr(lang, "Too long")
-	}
-	if msg.GivenName != "" && matchBadGname {
-		msg.Errors["GivenName"] = Tr(lang, "Bad character")
+	if userf.SN != "" && matchBadSN {
+		userf.Errors["SN"] = Tr(lang, "Bad character")
 	}
 
-	if msg.UIDNumber < 0 {
-		msg.Errors["UIDNumber"] = Tr(lang, "Unknown user")
+	matchBadGname := rxBadChar.MatchString(userf.GivenName)
+	if userf.GivenName != "" && len(userf.GivenName) > 32 {
+		userf.Errors["GivenName"] = Tr(lang, "Too long")
+	}
+	if userf.GivenName != "" && matchBadGname {
+		userf.Errors["GivenName"] = Tr(lang, "Bad character")
 	}
 
-	return len(msg.Errors) == 0
+	if userf.UIDNumber < 0 {
+		userf.Errors["UIDNumber"] = Tr(lang, "Unknown user")
+	}
+
+	return len(userf.Errors) == 0
 }
 
 // Helpers
@@ -192,12 +211,7 @@ func UserEdit(c *gin.Context) {
 	}
 
 	if userf.OTPSecret != "" {
-		totp := gotp.NewDefaultTOTP(userf.OTPSecret)
-		sec := totp.ProvisioningUri(userf.Name, cfg.AppName)
-		var png []byte
-		png, _ = qrcode.Encode(sec, qrcode.Medium, 256)
-		img := base64.StdEncoding.EncodeToString(png)
-		userf.OTPImg = img
+		userf.CreateOTPimg(cfg.AppName)
 	}
 
 	render(c, gin.H{"title": Tr(lang, "Edit user"), "currentPage": "user", "u": userf, "groupdata": Data.Groups}, "user/edit.tmpl")
@@ -258,12 +272,7 @@ func UserUpdate(c *gin.Context) {
 	}
 	// fmt.Printf("%+v\n", userf)
 	if userf.OTPSecret != "" {
-		totp := gotp.NewDefaultTOTP(userf.OTPSecret)
-		sec := totp.ProvisioningUri(userf.Name, cfg.AppName)
-		var png []byte
-		png, _ = qrcode.Encode(sec, qrcode.Medium, 256)
-		img := base64.StdEncoding.EncodeToString(png)
-		userf.OTPImg = img
+		userf.CreateOTPimg(cfg.AppName)
 	}
 
 	// Validate entries
@@ -400,16 +409,12 @@ func UserProfile(c *gin.Context) {
 		SN:           u.SN,
 		GivenName:    u.GivenName,
 		Disabled:     u.Disabled,
+		OTPSecret:    u.OTPSecret,
 		Lang:         lang,
 	}
 
-	if u.OTPSecret != "" {
-		totp := gotp.NewDefaultTOTP(u.OTPSecret)
-		sec := totp.ProvisioningUri(u.Name, cfg.AppName)
-		var png []byte
-		png, _ = qrcode.Encode(sec, qrcode.Medium, 256)
-		img := base64.StdEncoding.EncodeToString(png)
-		userf.OTPImg = img
+	if userf.OTPSecret != "" {
+		userf.CreateOTPimg(cfg.AppName)
 	}
 
 	render(c, gin.H{"title": u.Name, "u": userf, "currentPage": "profile", "groupdata": Data.Groups}, "user/profile.tmpl")
@@ -431,11 +436,6 @@ func UserChgPasswd(c *gin.Context) {
 
 	u := Data.Users[k]
 	role := c.MustGet("Role").(string)
-	// application accounts don't change their password
-	if role != "admin" && role != "user" { // users and admins are defined by group set by GIDcanChgPass, GIDAdmin config
-		render(c, gin.H{"title": u.Name, "currentPage": "profile", "u": u, "groupdata": Data.Groups}, "user/profile.tmpl")
-		return
-	}
 
 	userf := &UserForm{
 		UIDNumber:    u.UIDNumber,
@@ -450,6 +450,16 @@ func UserChgPasswd(c *gin.Context) {
 		Lang:         lang,
 	}
 	userf.Errors = make(map[string]string)
+
+	if userf.OTPSecret != "" {
+		userf.CreateOTPimg(cfg.AppName)
+	}
+
+	// application accounts don't change their password
+	if role != "admin" && role != "user" { // users and admins are defined by group set by GIDcanChgPass, GIDAdmin config
+		render(c, gin.H{"title": u.Name, "currentPage": "profile", "u": userf, "groupdata": Data.Groups}, "user/profile.tmpl")
+		return
+	}
 
 	pass1 := c.PostForm("inputPassword")
 	pass2 := c.PostForm("inputPassword2")
