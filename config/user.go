@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
+	"github.com/pquerna/otp/hotp"
+	"github.com/pquerna/otp/totp"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -49,4 +51,11 @@ func (u *User) SetBcryptPass(pass string) {
 	if err == nil {
 		u.PassBcrypt = hex.EncodeToString(hashedPassword)
 	}
+}
+
+func (u *User) ValidOTP(code string, prod bool) bool {
+	if prod {
+		return totp.Validate(code, u.OTPSecret)
+	}
+	return hotp.Validate(code, 1, u.OTPSecret) // for tests
 }

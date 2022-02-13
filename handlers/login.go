@@ -12,6 +12,7 @@ import (
 func LoginHandlerForm(c *gin.Context) {
 	cfg := c.MustGet("Cfg").(config.WebConfig)
 	userName, userId := helpers.GetUserID(c)
+	s := helpers.GetSession(c)
 
 	c.HTML(200, "home/login.tmpl", gin.H{
 		"userName":    userName,
@@ -19,6 +20,7 @@ func LoginHandlerForm(c *gin.Context) {
 		"currentPage": "login",
 		"version":     Version,
 		"appname":     cfg.AppName,
+		"otp":         s.ReqOTP,
 		"warning":     helpers.GetFlashCookie(c, "warning"),
 		"error":       helpers.GetFlashCookie(c, "error"),
 	})
@@ -34,6 +36,7 @@ func LoginHandler(c *gin.Context) {
 
 	username := c.PostForm("username")
 	password := c.PostForm("password")
+	code := c.PostForm("code")
 
 	switch {
 	case s.Lock: // == true
@@ -59,12 +62,19 @@ func LoginHandler(c *gin.Context) {
 		}*/
 		if valid {
 			tmpid := strconv.Itoa(u.UIDNumber)
-			s.User = username
 			s.UserID = tmpid
 			s.Count = 0
-
-			helpers.SetSession(c, s.ToJSONStr())
-			c.Redirect(302, "/auth/user/"+tmpid)
+			// TODO redirect to otp if otp group and secret
+			if u.OTPSecret != "" {
+				s.ReqOTP = true
+				helpers.SetSession(c, s.ToJSONStr())
+				c.Redirect(302, "/auth/login")
+			} else {
+				s.ReqOTP = false
+				s.User = username
+				helpers.SetSession(c, s.ToJSONStr())
+				c.Redirect(302, "/auth/user/"+tmpid)
+			}
 		} else {
 			Log.Info(c.ClientIP(), " - AUTHENTICATION failed for ", username)
 			s.User = username
@@ -72,6 +82,18 @@ func LoginHandler(c *gin.Context) {
 			helpers.SetSession(c, s.ToJSONStr())
 			helpers.SetFlashCookie(c, "warning", helpers.Tr(lang, "Bad credentials"))
 			c.Redirect(302, "/auth/login")
+		}
+	case s.UserID != "" && code != "":
+		u := Data.Users[GetUserKey(s.UserID)]
+		valid := u.ValidOTP(code, !cfg.Debug)
+		if !valid {
+			c.Redirect(302, "/auth/login")
+		} else {
+			s.ReqOTP = false
+			s.User = u.Name
+			helpers.SetSession(c, s.ToJSONStr())
+			tmpid := strconv.Itoa(u.UIDNumber)
+			c.Redirect(302, "/auth/user/"+tmpid)
 		}
 	default:
 		Log.Error(c.ClientIP(), " - Bad Post params")

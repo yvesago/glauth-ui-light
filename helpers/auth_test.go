@@ -81,11 +81,12 @@ func TestHelpersSession(t *testing.T) {
 
 	// User access
 	fmt.Println("= User access")
-	/*respA, _ = testCookieAccess(t, router, "GET", "/user/5000", usercookie)
+	respA, url = testCookieAccess(t, router, "GET", "/auth/logout", usercookie)
 	assert.Equal(t, 200, respA.Code, "http GET user access to user profile")
-	assert.Equal(t, true, strings.Contains(respA.Body.String(), ">Change password</button>"), "http GET success allow Change pass")
+	assert.Equal(t, "/", url, "http GET logout success")
+	fmt.Printf("%+v\n", respA)
 
-	respA, url = testCookieAccess(t, router, "GET", "/user/5001", usercookie)
+	/*respA, url = testCookieAccess(t, router, "GET", "/user/5001", usercookie)
 	assert.Equal(t, 302, respA.Code, "http GET restrict user access to other profile")
 	assert.Equal(t, "/auth/logout", url, "http GET restrict user access to other profile")
 	respA, _ = testCookieAccess(t, router, "GET", "/user/5002", usercookie)

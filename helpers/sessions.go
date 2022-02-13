@@ -14,7 +14,7 @@ type Status struct {
 	Count    int    `json:"count"`
 	User     string `json:"user"`
 	UserID   string `json:"userid"`
-	//	Confirm  bool   `json:"confirm"`
+	ReqOTP   bool   `json:"reqotp"`
 }
 
 // ToJSONStr Status object to string.

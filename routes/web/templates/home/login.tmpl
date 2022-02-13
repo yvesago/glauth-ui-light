@@ -14,6 +14,12 @@
   <div class="form-bottom">
 
     <form role="form" action="" method="post" class="login-form">
+    {{ if .otp }}
+      <div class="mb-3">
+        <input id="code" name="code" required placeholder={{ tr "Code" }} type="text" value="" size="6" autocomplete="off" pattern="\d{6}"/>
+      </div>
+      <button type="submit" class="btn btn-primary">{{ tr "Submit" }}</button>
+    {{ else }}
       <div class="mb-3">
         <label for="form-username">{{ tr "Login" }} </label>
         <input name="username" placeholder="{{ tr "Username" }}..." class="form-username form-control" id="form-username" type="text" required>
@@ -23,6 +29,7 @@
         <input name="password" placeholder="{{ tr "Password" }}..." class="form-password form-control" id="form-password" type="password" required>
       </div>
       <button type="submit" class="btn btn-primary">{{ tr "Connect" }}</button>
+    {{ end }}
     </form>
 
   </div>

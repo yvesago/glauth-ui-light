@@ -109,7 +109,7 @@ func initServer(cfg *config.WebConfig) *gin.Engine {
 	r.Use(gin.Recovery())
 
 	// Set TrustedProxies
-	r.SetTrustedProxies(cfg.Sec.TrustedProxies)
+	r.SetTrustedProxies(cfg.Sec.TrustedProxies) //nolint:errcheck //useless check
 
 	// Find source IP from proxy
 	r.ForwardedByClientIP = true

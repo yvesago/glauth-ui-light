@@ -2,7 +2,12 @@ package config
 
 import (
 	"log"
+	"strings"
 	"testing"
+
+	"encoding/base32"
+
+	"github.com/pquerna/otp/hotp"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -15,6 +20,7 @@ func initUsersValues() {
 		UIDNumber:    5000,
 		PrimaryGroup: 6501,
 		PassSHA256:   "6478579e37aff45f013e14eeb30b3cc56c72ccdc310123bcdf53e0333e3f416a",
+		OTPSecret:    "3hnvnk4ycv44glzigd6s25j4dougs3rk",
 	}
 	Data.Users = append(Data.Users, v1)
 	v2 := User{
@@ -82,4 +88,23 @@ func TestUserModel(t *testing.T) {
 
 	bcryptUser.SetBcryptPass("otherpass")
 	assert.Equal(t, true, bcryptUser.ValidPass("otherpass", false), "change bcrypt pass")
+
+	otpgood := "3hnvnk4ycv44glzigd6s25j4dougs3rk"
+	otpgood2 := "gvxdgn3hpfvwu2lhmz3gmm3z"
+	otpbad := "810bk3t6mdt5j579m29mjm"
+	_, err := base32.StdEncoding.DecodeString(strings.ToUpper(otpgood))
+	assert.Equal(t, nil, err, "good otp")
+	_, err = base32.StdEncoding.DecodeString(strings.ToUpper(otpgood2))
+	assert.Equal(t, nil, err, "good otp2")
+	_, err = base32.StdEncoding.DecodeString(strings.ToUpper(otpbad))
+	assert.Equal(t, "illegal base32 data at input byte 0", err.Error(), "bad otp")
+
+	passcode, _ := hotp.GenerateCode(otpgood, 1)
+	log.Println(passcode)
+
+	valid := hotp.Validate(passcode, 1, otpgood)
+	log.Println(valid)
+	sha256User.OTPSecret = otpgood
+	assert.Equal(t, true, sha256User.ValidOTP(passcode, false), "Valid hotp")
+	assert.Equal(t, false, sha256User.ValidOTP(passcode, true), "Bad totp")
 }

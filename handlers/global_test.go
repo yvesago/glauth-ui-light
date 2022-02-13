@@ -96,11 +96,55 @@ func testAccess(t *testing.T, router *gin.Engine, method string, testurl string)
 }
 
 // testLogin
-func testLogin(t *testing.T, router *gin.Engine, login string, pass string) *httptest.ResponseRecorder {
+func testLogin(t *testing.T, r *gin.Engine, login string, pass string, s []*http.Cookie) (*httptest.ResponseRecorder, []*http.Cookie) {
 	form := url.Values{}
 	form.Add("username", login)
 	form.Add("password", pass)
 	req, err := http.NewRequest("POST", "/auth/login", strings.NewReader(form.Encode()))
+	if len(s) != 0 {
+		for _, c := range s {
+			req.Header.Add("Cookie", c.String())
+		}
+	}
+	req.PostForm = form
+	req.PostForm = form
+	req.Header.Add("Content-Type", "application/x-www-form-Urlencoded")
+	if err != nil {
+		fmt.Println(err)
+	}
+	resp := httptest.NewRecorder()
+	r.ServeHTTP(resp, req)
+	// fmt.Printf("%+v\n",resp)
+	if login == "" || pass == "" {
+		return resp, nil
+	}
+	assert.Equal(t, 302, resp.Code, "http POST success redirect to Edit")
+	newurl, _ := resp.Result().Location()
+	fmt.Printf("=> Redirect to: %s\n", newurl.String())
+	req, _ = http.NewRequest("GET", newurl.String(), nil)
+	cookie := resp.Result().Cookies()
+	if len(cookie) != 0 {
+		for _, c := range cookie {
+			req.Header.Add("Cookie", c.String())
+		}
+	}
+	fmt.Printf("=> Cookie: %+v\n", cookie[0])
+	//fmt.Printf("=> req: %+v\n", req)
+	resp = httptest.NewRecorder()
+	r.ServeHTTP(resp, req)
+	return resp, cookie
+}
+
+// testLogin with otp
+func testCode(t *testing.T, router *gin.Engine, code string, session []*http.Cookie) *httptest.ResponseRecorder {
+	form := url.Values{}
+	form.Add("code", code)
+	req, err := http.NewRequest("POST", "/auth/login", strings.NewReader(form.Encode()))
+	if len(session) != 0 {
+		for _, c := range session {
+			req.Header.Add("Cookie", c.String())
+		}
+	}
 	req.PostForm = form
 	req.Header.Add("Content-Type", "application/x-www-form-Urlencoded")
 	if err != nil {
@@ -109,22 +153,14 @@ func testLogin(t *testing.T, router *gin.Engine, login string, pass string) *htt
 	resp := httptest.NewRecorder()
 	router.ServeHTTP(resp, req)
 	// fmt.Printf("%+v\n",resp)
-	if login == "" || pass == "" {
+	if code == "" {
 		return resp
 	}
 	assert.Equal(t, 302, resp.Code, "http POST success redirect to Edit")
 	newurl, _ := resp.Result().Location()
 	fmt.Printf("=> Redirect to: %s\n", newurl.String())
 	cookie := resp.Result().Cookies()
-	fmt.Printf("=> Cookie: %+v\n", cookie[0])
-	if strings.Contains(cookie[0].String(), "session") {
-		req, _ = http.NewRequest("GET", newurl.String(), nil)
-		for _, c := range cookie {
-			req.Header.Add("Cookie", c.String())
-		}
-		resp = httptest.NewRecorder()
-		router.ServeHTTP(resp, req)
-	}
+	fmt.Printf("=> Cookie: %+v\n", cookie)
 	return resp
 }
 
@@ -189,7 +225,7 @@ func initUsersValues() {
 		UIDNumber:    5000,
 		PrimaryGroup: 6501,
 		PassSHA256:   "6478579e37aff45f013e14eeb30b3cc56c72ccdc310123bcdf53e0333e3f416a",
-		OTPSecret:    "somelongrandomstring",
+		OTPSecret:    "3hnvnk4ycv44glzigd6s25j4dougs3rk",
 	}
 	Data.Users = append(Data.Users, v1)
 	v2 := User{
