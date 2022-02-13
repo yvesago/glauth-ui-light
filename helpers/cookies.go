@@ -55,7 +55,7 @@ func ClearSession(c *gin.Context) {
 	cookie := &http.Cookie{
 		Name:   CookieSessionName,
 		Value:  "",
-		Path:   "/",
+		Path:   "/auth/",
 		MaxAge: -1,
 	}
 
