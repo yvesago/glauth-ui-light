@@ -33,6 +33,7 @@ func TestLogin(t *testing.T) {
 			Start:         5000,
 			GIDAdmin:      6501,
 			GIDcanChgPass: 6500,
+			GIDuseOtp:     6501,
 		},
 		PassPolicy: PassPolicy{
 			AllowReadSSHA256: true,
@@ -57,6 +58,11 @@ func TestLogin(t *testing.T) {
 	resp, _ := testLogin(t, router, "serviceapp", "dogood", nil) // user without otp
 	assert.Equal(t, 200, resp.Code, "http GET success first user profile")
 	assert.Equal(t, true, strings.Contains(resp.Body.String(), "class=\"navbar-brand\">serviceapp</span>"), "http GET success first user profile")
+
+	Data.Users[2].Disabled = true // serviceapp user disabled
+	resp, _ = testLogin(t, router, "serviceapp", "dogood", nil) // user without otp
+	assert.Equal(t, 200, resp.Code, "http GET success first user profile")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "alert-warning"), "account disabled")
 	//fmt.Printf("%+v\n",resp)
 
 	var cookie []*http.Cookie

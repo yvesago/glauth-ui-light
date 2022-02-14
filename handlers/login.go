@@ -60,27 +60,39 @@ func LoginHandler(c *gin.Context) {
 		if *backend == "ldap" {
 			valid = ldapValidateUser(username, password, config)
 		}*/
-		if valid {
+		if valid && !u.Disabled {
 			tmpid := strconv.Itoa(u.UIDNumber)
 			s.UserID = tmpid
 			s.Count = 0
-			// TODO redirect to otp if otp group and secret
-			if u.OTPSecret != "" {
+
+			groups := u.OtherGroups
+			groups = append(groups, u.PrimaryGroup)
+			useOtp := contains(groups, cfg.CfgUsers.GIDuseOtp)
+
+			// redirect to otp if otp group and secret
+			Log.Info("useOtp:", useOtp)
+			if u.OTPSecret != "" && useOtp {
 				s.ReqOTP = true
+				s.User = ""
 				helpers.SetSession(c, s.ToJSONStr())
 				c.Redirect(302, "/auth/login")
-			} else {
+			} else { // Auth success
 				s.ReqOTP = false
 				s.User = username
 				helpers.SetSession(c, s.ToJSONStr())
 				c.Redirect(302, "/auth/user/"+tmpid)
 			}
-		} else {
-			Log.Info(c.ClientIP(), " - AUTHENTICATION failed for ", username)
-			s.User = username
+		} else { // Auth failed
+			s.User = ""
 			s.UserID = ""
 			helpers.SetSession(c, s.ToJSONStr())
-			helpers.SetFlashCookie(c, "warning", helpers.Tr(lang, "Bad credentials"))
+			if u.Disabled {
+				Log.Info(c.ClientIP(), " - AUTH failed for ", username, " : Account disabled")
+				helpers.SetFlashCookie(c, "warning", helpers.Tr(lang, "Account disabled"))
+			} else {
+				Log.Info(c.ClientIP(), " - AUTH failed for ", username, "Bad credentials")
+				helpers.SetFlashCookie(c, "warning", helpers.Tr(lang, "Bad credentials"))
+			}
 			c.Redirect(302, "/auth/login")
 		}
 	case s.UserID != "" && code != "":
@@ -88,7 +100,7 @@ func LoginHandler(c *gin.Context) {
 		valid := u.ValidOTP(code, !cfg.Debug)
 		if !valid {
 			c.Redirect(302, "/auth/login")
-		} else {
+		} else { // Auth success
 			s.ReqOTP = false
 			s.User = u.Name
 			helpers.SetSession(c, s.ToJSONStr())
