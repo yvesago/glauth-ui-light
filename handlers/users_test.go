@@ -116,13 +116,13 @@ func TestUserHandlers(t *testing.T) {
 
 	cfg := WebConfig{
 		AppName: "test",
-		DBfile: "sample-simple.cfg",
+		DBfile:  "sample-simple.cfg",
 		Locale: Locale{
 			Lang: "en",
 			Path: "../locales/",
 		},
-		Debug:   true,
-		Verbose: false,
+		Debug: true,
+		Tests: true,
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      5501,
@@ -250,8 +250,8 @@ func TestUserHandlers(t *testing.T) {
 
 	fmt.Println("= http Update only Password")
 	form = url.Values{}
-	form.Add("inputName", "user2")            // Mandatory
-	form.Add("inputMail", "test@exemple.com") // to be set
+	form.Add("inputName", "user2")                         // Mandatory
+	form.Add("inputMail", "test@exemple.com")              // to be set
 	form.Add("inputOTPSecret", "gvxdgn3hpfvwu2lhmz3gmm3z") // to be set
 	form.Add("inputPassword", "somePass")
 	req, err = http.NewRequest("POST", Url+"/5001", strings.NewReader(form.Encode()))
@@ -400,8 +400,8 @@ func TestUserChgPass(t *testing.T) {
 			Lang: "fr",
 			Path: "../locales/",
 		},
-		Debug:   true,
-		Verbose: false,
+		Debug: true,
+		Tests: true,
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      6501,

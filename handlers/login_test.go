@@ -28,7 +28,7 @@ func TestLogin(t *testing.T) {
 			Path: "../locales/",
 		},
 		Debug:   true,
-		Verbose: false,
+		Tests:   true,
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      6501,

@@ -46,9 +46,9 @@ func TestUserModel(t *testing.T) {
 	defer resetData()
 
 	cfg := WebConfig{
-		DBfile:  "sample-simple.cfg",
-		Debug:   true,
-		Verbose: false,
+		DBfile: "sample-simple.cfg",
+		Debug:  true,
+		Tests:  true,
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      6501,

@@ -11,7 +11,7 @@ type WebConfig struct {
 	Port       string
 	DBfile     string
 	Debug      bool
-	Verbose    bool
+	Tests      bool
 	Sec        Sec
 	SSL        SSL
 	Logs       Logs

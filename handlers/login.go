@@ -97,7 +97,7 @@ func LoginHandler(c *gin.Context) {
 		}
 	case s.UserID != "" && code != "":
 		u := Data.Users[GetUserKey(s.UserID)]
-		valid := u.ValidOTP(code, !cfg.Debug)
+		valid := u.ValidOTP(code, !cfg.Tests)
 		if !valid {
 			c.Redirect(302, "/auth/login")
 		} else { // Auth success

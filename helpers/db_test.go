@@ -72,13 +72,13 @@ func readFile(f string) []string {
 func TestDB(t *testing.T) {
 
 	cfg := WebConfig{
-		DBfile:  "_sample-simple.cfg",
-                Locale: Locale{
-                        Lang: "en",
-                        Path: "../routes/",
-                },
-		Debug:   true,
-		Verbose: false,
+		DBfile: "_sample-simple.cfg",
+		Locale: Locale{
+			Lang: "en",
+			Path: "../routes/",
+		},
+		Debug: true,
+		Tests: true,
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      6501,

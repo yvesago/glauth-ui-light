@@ -61,7 +61,7 @@ func confLog(cfg *WebConfig) {
 
 func main() {
 	var Usage = func() {
-		fmt.Fprintf(os.Stderr, "\nUsage of %s\n\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "\nUsage of %s\n%s\n\n", os.Args[0], handlers.Version)
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
@@ -105,11 +105,11 @@ func main() {
 	if cfg.SSL.Crt != "" {
 		err = r.RunTLS(cfg.Port, cfg.SSL.Crt, cfg.SSL.Key)
 	} else {
+		fmt.Println("Server started. Version: " + handlers.Version)
+		log.Println("Server started. Version: " + handlers.Version)
 		err = r.Run(cfg.Port)
 	}
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
-	} else {
-		log.Println("Server started")
 	}
 }

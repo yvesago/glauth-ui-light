@@ -51,8 +51,8 @@ func TestSession(t *testing.T) {
 			Lang: "en",
 			Path: "../locales",
 		},
-		Debug:   true,
-		Verbose: false,
+		Debug: true,
+		Tests: true,
 		Sec: Sec{
 			CSRFrandom: "secret",
 		},

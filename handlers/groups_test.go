@@ -78,8 +78,8 @@ func TestGroupHandlers(t *testing.T) {
 			Lang: "en",
 			Path: "../locales/",
 		},
-		Debug:   true,
-		Verbose: false,
+		Debug: true,
+		Tests: true,
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      6501,
