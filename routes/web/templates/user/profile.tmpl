@@ -4,18 +4,18 @@
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
     {{ if .canChgPass }}
-    <button class="nav-link active" id="nav-chgpwd-tab" data-bs-toggle="tab" data-bs-target="#nav-chgpwd" type="button" role="tab" aria-controls="nav-chgpwd" aria-selected="true">{{ tr "Change password" }}</button>
+    <button class="nav-link {{ if not .navotp }}active{{ end }}" id="nav-chgpwd-tab" data-bs-toggle="tab" data-bs-target="#nav-chgpwd" type="button" role="tab" aria-controls="nav-chgpwd" aria-selected="true">{{ tr "Change password" }}</button>
     {{ end }}
     <button class="nav-link {{ if not .canChgPass }}active{{end}}" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">{{ tr "Profile" }}</button>
     {{ if .useOtp }}
-    <button class="nav-link" id="nav-otp-tab" data-bs-toggle="tab" data-bs-target="#nav-otp" type="button" role="tab" aria-controls="nav-otp" aria-selected="false">{{ tr "OTP" }}</button>
+    <button class="nav-link {{ if .navotp }}active{{ end }}" id="nav-otp-tab" data-bs-toggle="tab" data-bs-target="#nav-otp" type="button" role="tab" aria-controls="nav-otp" aria-selected="false">{{ tr "OTP" }}</button>
     {{ end }}
   </div>
 </nav>
 
 <div class="tab-content" id="nav-tabContent">
 {{ if .canChgPass }}
-<div class="tab-pane fade show active" id="nav-chgpwd" role="tabpanel" aria-labelledby="nav-chgpwd-tab">
+<div class="tab-pane fade {{ if not .navotp }}show active{{ end }}" id="nav-chgpwd" role="tabpanel" aria-labelledby="nav-chgpwd-tab">
 <form class="w-75 p-3" action="/auth/user/{{ .u.UIDNumber }}" method="POST">
 <input type="hidden" name="_csrf" value="{{ .Csrf }}">
 <input type="hidden" name="_method" value="PUT">
@@ -98,19 +98,58 @@
 </div>
 
 {{ if .useOtp }}
-<div class="tab-pane fade" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab">
-  <div class="row mb-3">
-    <label for="inputOTPSecret" class="col-sm-2 col-form-label">&nbsp;</label>
+<div class="tab-pane fade {{ if .navotp }}show active{{ end }}" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab">
+<form class="w-75 p-3" action="/auth/user/otp/{{ .u.UIDNumber }}" method="POST">
+<input type="hidden" name="_csrf" value="{{ .Csrf }}">
+<input type="hidden" name="_method" value="PUT">
+  <div class="row mb-6">
     <div class="col-sm-6">
+     {{ if .u.OTPSecret }}
 	<p>
 	  <img src="data:image/png;base64,{{.u.OTPImg}}" alt="QR Code" />
 	  <p><strong>{{ .appname }}</strong> - {{.u.Name}}</p>
 	</p>
+      {{ end }}
+     </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-3">
+      <input type="password" class="form-control {{ with .u.Errors.OTPSecret }}is-invalid{{ end }}" id="inputOTPSecret" name="inputOTPSecret" value="{{ .u.OTPSecret }}">
+      {{ with .u.Errors.OTPSecret }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+    <div class="col-lg-4">
+      <button type="button" id="submit" class="btn btn-warning"
+        onClick="(function(){
+           $('#inputOTPSecret').val( random_gen(24) );
+           $('#otpShow').addClass('disabled').prop('disabled', true);
+           return true; })();return false;">{{ tr "Create secret" }}</button>
     </div>
   </div>
+  <button type="submit" class="btn btn-primary" {{ if .lock }}disabled{{ end }}>{{ tr "Change Secret" }}</button>
+</form>
 </div>
+
+
+<script src="/js/Nibbler.js" crossorigin="anonymous"></script>
+<script>
+  base32 = new Nibbler({
+    dataBits: 8,
+    codeBits: 5,
+    keyString: 'abcdefghijklmnopqrstuvwxyz234567',
+    pad: '='
+  });
+
+  function random_gen(length = 16) {
+    let random_str = (Math.random()*1e32).toString(36);
+    random_str = base32.encode(random_str);
+
+    return random_str.substring(0, length);
+  }
+</script>
 {{end}}
-</div>
+
 
 {{ template "global/footer.tmpl" .}}
 {{ end }}

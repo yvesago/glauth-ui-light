@@ -550,9 +550,9 @@ func UserChgOTP(c *gin.Context) {
 		userf.CreateOTPimg(cfg.AppName)
 	}
 
-        groups := u.OtherGroups
-        groups = append(groups, u.PrimaryGroup)
-        useOtp := contains(groups, cfg.CfgUsers.GIDuseOtp)
+	groups := u.OtherGroups
+	groups = append(groups, u.PrimaryGroup)
+	useOtp := contains(groups, cfg.CfgUsers.GIDuseOtp)
 
 	// application accounts don't change their password
 	if !useOtp { // only for members of GIDuseOtp
@@ -563,9 +563,13 @@ func UserChgOTP(c *gin.Context) {
 	otp := c.PostForm("inputOTPSecret")
 	userf.OTPSecret = otp
 
-	// Validate new otpsecret
-	if !userf.Validate(cfg.PassPolicy) {
-		render(c, gin.H{"title": u.Name, "currentPage": "profile", "u": userf, "groupdata": Data.Groups}, "user/profile.tmpl")
+	// Validate new otpsecret or no change
+	if !userf.Validate(cfg.PassPolicy) || otp == (&Data.Users[k]).OTPSecret {
+		render(c, gin.H{"title": u.Name,
+			"currentPage": "profile",
+			"navotp":      true,
+			"u":           userf,
+			"groupdata":   Data.Groups}, "user/profile.tmpl")
 		return
 	}
 
@@ -579,6 +583,7 @@ func UserChgOTP(c *gin.Context) {
 			"title":       u.Name,
 			"currentPage": "profile",
 			"warning":     Tr(lang, "Data locked by admin."),
+			"navotp":      true,
 			"u":           userf,
 			"groupdata":   Data.Groups},
 			"user/profile.tmpl")
@@ -587,10 +592,14 @@ func UserChgOTP(c *gin.Context) {
 		if err != nil {
 			render(c, gin.H{"title": Tr(lang, "Error"), "currentPage": "profile", "error": err.Error()}, "home/error.tmpl")
 		} else {
+			if userf.OTPSecret != "" {
+				userf.CreateOTPimg(cfg.AppName)
+			}
 			render(c, gin.H{
 				"title":       u.Name,
 				"currentPage": "profile",
 				"success":     Tr(lang, "OTP updated"),
+				"navotp":      true,
 				"u":           userf,
 				"groupdata":   Data.Groups},
 				"user/profile.tmpl")
