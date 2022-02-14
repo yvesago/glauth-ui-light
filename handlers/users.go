@@ -515,3 +515,85 @@ func UserChgPasswd(c *gin.Context) {
 		}
 	}
 }
+
+func UserChgOTP(c *gin.Context) {
+	cfg := c.MustGet("Cfg").(WebConfig)
+	lang := cfg.Locale.Lang
+	id := c.Params.ByName("id")
+
+	if !isSelfAccess(c, "UserProfile", id) {
+		return
+	}
+
+	k := ctlUserExist(c, lang, id)
+	if k < 0 {
+		return
+	}
+
+	u := Data.Users[k]
+
+	userf := &UserForm{
+		UIDNumber:    u.UIDNumber,
+		Mail:         u.Mail,
+		Name:         u.Name,
+		PrimaryGroup: u.PrimaryGroup,
+		OtherGroups:  u.OtherGroups,
+		SN:           u.SN,
+		GivenName:    u.GivenName,
+		Disabled:     u.Disabled,
+		OTPSecret:    u.OTPSecret,
+		Lang:         lang,
+	}
+	userf.Errors = make(map[string]string)
+
+	if userf.OTPSecret != "" {
+		userf.CreateOTPimg(cfg.AppName)
+	}
+
+        groups := u.OtherGroups
+        groups = append(groups, u.PrimaryGroup)
+        useOtp := contains(groups, cfg.CfgUsers.GIDuseOtp)
+
+	// application accounts don't change their password
+	if !useOtp { // only for members of GIDuseOtp
+		render(c, gin.H{"title": u.Name, "currentPage": "profile", "u": userf, "groupdata": Data.Groups}, "user/profile.tmpl")
+		return
+	}
+
+	otp := c.PostForm("inputOTPSecret")
+	userf.OTPSecret = otp
+
+	// Validate new otpsecret
+	if !userf.Validate(cfg.PassPolicy) {
+		render(c, gin.H{"title": u.Name, "currentPage": "profile", "u": userf, "groupdata": Data.Groups}, "user/profile.tmpl")
+		return
+	}
+
+	(&Data.Users[k]).OTPSecret = userf.OTPSecret
+
+	username := c.MustGet("Login").(string)
+	Log.Info(fmt.Sprintf("%s -- %s otp secret changed by %s", c.ClientIP(), u.Name, username))
+
+	if Lock != 0 {
+		render(c, gin.H{
+			"title":       u.Name,
+			"currentPage": "profile",
+			"warning":     Tr(lang, "Data locked by admin."),
+			"u":           userf,
+			"groupdata":   Data.Groups},
+			"user/profile.tmpl")
+	} else {
+		err := WriteDB(&cfg, Data, username)
+		if err != nil {
+			render(c, gin.H{"title": Tr(lang, "Error"), "currentPage": "profile", "error": err.Error()}, "home/error.tmpl")
+		} else {
+			render(c, gin.H{
+				"title":       u.Name,
+				"currentPage": "profile",
+				"success":     Tr(lang, "OTP updated"),
+				"u":           userf,
+				"groupdata":   Data.Groups},
+				"user/profile.tmpl")
+		}
+	}
+}
