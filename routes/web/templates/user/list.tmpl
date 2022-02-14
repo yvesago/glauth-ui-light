@@ -18,8 +18,14 @@
   {{ range .userdata }}
   <tr {{ if .Disabled }}class="table-warning"{{end}}>
         <td>{{ .Name }}</td>
-	<td><strong> {{ (index $.hashgroups .PrimaryGroup) }}</strong>
-	<br /> {{range .OtherGroups}} {{ (index $.hashgroups .) }} {{end}}
+	<td><strong> {{ (index $.hashgroups .PrimaryGroup) }}
+            {{ if eq (index $.hashgroups .PrimaryGroup) $.groupsinfo.Admins }} &#11088; {{end}}
+            </strong>
+	    <br />
+            {{range .OtherGroups}}
+                {{ (index $.hashgroups .) }}
+                {{ if eq (index $.hashgroups .) $.groupsinfo.Admins }} &#11088; {{end}}
+            {{end}}
         </td>
         <td>{{ .GivenName }} {{.SN}}</td>
         <td>{{ .Mail }}</td>
@@ -33,6 +39,15 @@
  </tbody>
 </table>
 </div>
+
+<p>
+<figcaption class="blockquote-footer">
+{{ tr "Special groups" }}:
+{{ tr "Admins" }} : <strong>«{{ .groupsinfo.Admins }}» &#11088;</strong>,
+{{ tr "Users" }} : «{{ .groupsinfo.Users }}»,
+{{ tr "Can use OTP" }} : «{{ .groupsinfo.OTP }}»
+</figcaption>
+</p>
 
 {{ template "global/footer.tmpl" .}}
 {{ end }}

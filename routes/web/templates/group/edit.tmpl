@@ -6,7 +6,7 @@
   <input type="hidden" name="_csrf" value="{{ .Csrf }}">
   <div class="row mb-3">
     <label for="inputName" class="col-sm-2 col-form-label">{{ tr "Group" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control {{ with .u.Errors.Name }}is-invalid{{ end }}" name="inputName" id="inputName" value="{{ .u.Name }}" required>
       <div id="nameHelp1" class="form-text">{{ tr "Change with caution" }}</div>
       <div id="nameHelp1" class="form-text">{{ tr "Mandatory" }}, {{ tr "lower case ASCII characters" }}, {{ tr "min 2" }}, {{ tr "max 16" }}</div>

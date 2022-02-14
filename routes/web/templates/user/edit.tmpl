@@ -6,7 +6,7 @@
   <input type="hidden" name="_csrf" value="{{ .Csrf }}">
   <div class="row mb-3">
     <label for="inputName" class="col-sm-2 col-form-label">{{ tr "Login" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control {{ with .u.Errors.Name }}is-invalid{{ end }}" name="inputName" id="inputName" value="{{ .u.Name }}" required>
       <div id="nameHelp1" class="form-text">{{ tr "Change with caution" }}</div>
       <div id="nameHelp1" class="form-text">{{ tr "Mandatory" }}, {{ tr "lower case ASCII characters" }}, {{ tr "min 2" }}, {{ tr "max 16" }}</div>
@@ -17,7 +17,7 @@
   </div>
   <div class="row mb-3">
     <label for="inputGroup" class="col-sm-2 col-form-label">{{ tr "Group" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <select class="form-select {{ with .u.Errors.PrimaryGroup }}is-invalid{{ end }} " name="inputGroup" id="inputGroup" aria-label="select primary group">
 	<option />
 	{{ range .groupdata }}
@@ -31,7 +31,7 @@
   </div>
   <div class="row mb-3">
     <label for="inputOtherGroup" class="col-sm-2 col-form-label">{{ tr "Others" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <select class="form-select {{ with .u.Errors.OtherGroups }}is-invalid{{ end }}" multiple="" name="inputOtherGroup" id="inputOtherGroup" aria-label="multiple select other groups">
 	<option value="0"> </option>
 	{{ range .groupdata }}
@@ -47,10 +47,18 @@
        <div class="invalid-feedback">{{ . }}</div>
       {{ end }}
     </div>
+    <div class="col-lg-4 form-text">
+	{{ tr "Special groups" }}
+	<ul>
+          <li>{{ tr "Admins" }} : <strong>«{{ .groupsinfo.Admins }}» &#11088;</strong>,</li>
+          <li>{{ tr "Users" }} : «{{ .groupsinfo.Users }}»,</li>
+          <li>{{ tr "Can use OTP" }} : «{{ .groupsinfo.OTP }}»</li>
+	</ul>
+    </div>
   </div>
   <div class="row mb-3">
     <label for="inputSN" class="col-sm-2 col-form-label">{{ tr "Name" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control {{ with .u.Errors.SN }}is-invalid{{ end }}" name="inputSN" id="inputSN" value="{{ .u.SN }}">
       {{ with .u.Errors.SN }}
        <div class="invalid-feedback">{{ . }}</div>
@@ -59,7 +67,7 @@
   </div>
   <div class="row mb-3">
     <label for="inputGivenName" class="col-sm-2 col-form-label">{{ tr "Givenname" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control {{ with .u.Errors.GivenName }}is-invalid{{ end }}" name="inputGivenName" id="inputGivenName" value="{{ .u.GivenName }}">
       {{ with .u.Errors.GivenName }}
        <div class="invalid-feedback">{{ . }}</div>
@@ -68,7 +76,7 @@
   </div>
   <div class="row mb-3">
     <label for="inputMail" class="col-sm-2 col-form-label">{{ tr "Mail" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control {{ with .u.Errors.Mail }}is-invalid{{ end }}" name="inputMail" id="inputMail" value="{{ .u.Mail }}">
       {{ with .u.Errors.Mail }}
        <div class="invalid-feedback">{{ . }}</div>
@@ -77,7 +85,7 @@
   </div>
   <div class="row mb-3">
     <label for="inputDisabled" class="col-sm-2 col-form-label">{{ tr "Disabled" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="checkbox" class="check-input" name="inputDisabled" id="inputDisabled" {{if .u.Disabled }}checked{{end}}>
     </div>
   </div>
@@ -85,6 +93,7 @@
     <label for="inputOTPSecret" class="col-sm-2 col-form-label">{{ tr "OTP" }}</label>
     <div class="col-sm-6">
       <input type="text" class="form-control {{ with .u.Errors.OTPSecret }}is-invalid{{ end }}" id="inputOTPSecret" name="inputOTPSecret" value="{{ .u.OTPSecret }}">
+      <div id="otpHelp1" class="form-text">{{ tr "Only for group" }}: «{{ .groupsinfo.OTP }}»</div>
       {{ with .u.Errors.OTPSecret }}
        <div class="invalid-feedback">{{ . }}</div>
       {{ end }}
@@ -93,15 +102,16 @@
       <button type="button" class="btn btn-secondary" id="otpShow" name="otpShow" data-bs-toggle="modal" data-bs-target="#otpModal">{{ tr "Show QR code" }}</button>
     </div>
     <div class="col-lg-2">
-      <input type="button" id="submit" value={{ tr "New OTP" }} class="btn btn-warning" onClick="(function(){
+      <button type="button" id="submit" class="btn btn-warning"
+        onClick="(function(){
            $('#inputOTPSecret').val( random_gen(24) );
            $('#otpShow').addClass('disabled').prop('disabled', true);
-           return true; })();return false;">
+           return true; })();return false;">{{ tr "Create OTP" }}</button>
     </div>
   </div>
   <div class="row mb-3">
     <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "Password" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="password" class="form-control {{ with .u.Errors.Password }}is-invalid{{ end }}" id="inputPassword" name="inputPassword">
       {{ with .u.Errors.Password }}
        <div class="invalid-feedback">{{ . }}</div>

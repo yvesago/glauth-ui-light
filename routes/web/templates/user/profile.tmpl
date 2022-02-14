@@ -21,7 +21,7 @@
 <input type="hidden" name="_method" value="PUT">
   <div class="row mb-3">
     <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "New password" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="password" class="form-control {{ with .u.Errors.Password }}is-invalid{{ end }}" id="inputPassword" name="inputPassword">
       {{ with .u.Errors.Password }}
        <div class="invalid-feedback">{{ . }}</div>
@@ -30,7 +30,7 @@
   </div>
   <div class="row mb-3">
     <label for="inputPassword2" class="col-sm-2 col-form-label">{{ tr "Confirm password" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="password" class="form-control {{ with .u.Errors.Password2 }}is-invalid{{ end }}" id="inputPassword2" name="inputPassword2">
       {{ with .u.Errors.Password2 }}
        <div class="invalid-feedback">{{ . }}</div>
@@ -50,7 +50,7 @@
 <form class="w-75 p-3">
   <div class="row mb-3">
     <label for="inputGroup" class="col-sm-2 col-form-label">{{ tr "Group" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control-plaintext" name="inputGroup" id="inputGroup"
 	value ="{{ range .groupdata }}{{if eq $.u.PrimaryGroup .GIDNumber}}{{.Name}}{{end}}{{end}}"
        readonly>
@@ -58,7 +58,7 @@
   </div>
   <div class="row mb-3">
     <label for="inputOtherGroup" class="col-sm-2 col-form-label">{{ tr "Others" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <select class="form-select" multiple="" name="inputOtherGroup" id="inputOtherGroup" aria-label="multiple select other groups" readonly>
 	{{ range .groupdata }}
          {{ with $t := .GIDNumber }}
@@ -72,25 +72,25 @@
   </div>
   <div class="row mb-3">
     <label for="inputSN" class="col-sm-2 col-form-label">{{ tr "Name" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control-plaintext" name="inputSN" id="inputSN" value="{{ .u.SN }}" readonly>
     </div>
   </div>
   <div class="row mb-3">
     <label for="inputGivenName" class="col-sm-2 col-form-label">{{ tr "Surname" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control-plaintext" name="inputGivenName" id="inputGivenName" value="{{ .u.GivenName }}" readonly>
     </div>
   </div>
   <div class="row mb-3">
     <label for="inputMail" class="col-sm-2 col-form-label">{{ tr "Mail" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="text" class="form-control-plaintext" name="inputMail" id="inputMail" value="{{ .u.Mail }}" readonly>
     </div>
   </div>
   <div class="row mb-3">
     <label for="inputDisabled" class="col-sm-2 col-form-label">{{ tr "Disabled" }}</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
       <input type="checkbox" class="check-input" name="inputDisabled" id="inputDisabled" {{if .u.Disabled }}checked{{end}} disabled readonly>
     </div>
   </div>
@@ -101,9 +101,9 @@
 <div class="tab-pane fade" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab">
   <div class="row mb-3">
     <label for="inputOTPSecret" class="col-sm-2 col-form-label">&nbsp;</label>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
 	<p>
-	  <img src="data:image/png;base64,{{.u.OTPImg}}" alt="QrCode" />
+	  <img src="data:image/png;base64,{{.u.OTPImg}}" alt="QR Code" />
 	  <p><strong>{{ .appname }}</strong> - {{.u.Name}}</p>
 	</p>
     </div>

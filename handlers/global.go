@@ -74,6 +74,8 @@ func render(c *gin.Context, data gin.H, templateName string) {
 		data["useOtp"] = useOtp.(bool)
 	}
 
+	data["groupsinfo"] = GetSpecialGroups(c)
+
 	if data["success"] == nil {
 		data["success"] = helpers.GetFlashCookie(c, "success")
 	}

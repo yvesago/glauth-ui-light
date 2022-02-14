@@ -75,6 +75,40 @@ func GetGroupKey(id string) int {
 	return i
 }
 
+func GetGroupByID(id int) (Group, error) {
+	for k := range Data.Groups {
+		if Data.Groups[k].GIDNumber == id {
+			return Data.Groups[k], nil
+		}
+	}
+	return Group{}, fmt.Errorf("unknown group")
+}
+
+type SpecialGroups struct {
+	Admins string
+	Users  string
+	OTP    string
+}
+
+func GetSpecialGroups(c *gin.Context) SpecialGroups {
+	cfg := c.MustGet("Cfg").(WebConfig)
+	s := SpecialGroups{}
+	g, err := GetGroupByID(cfg.CfgUsers.GIDAdmin)
+	if err == nil {
+		s.Admins = g.Name
+	}
+	g, err = GetGroupByID(cfg.CfgUsers.GIDcanChgPass)
+	if err == nil {
+		s.Users = g.Name
+	}
+	g, err = GetGroupByID(cfg.CfgUsers.GIDuseOtp)
+	if err == nil {
+		s.OTP = g.Name
+	}
+
+	return s
+}
+
 /*func GetGroupByName(name string) (Group, error) {
 	for _, v := range Data.Groups {
 		if v.Name == name {

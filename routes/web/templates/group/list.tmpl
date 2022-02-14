@@ -12,12 +12,21 @@
  <tbody>
   {{ range .groupdata }}
   <tr>
-        <td>{{ .Name }}</td>
+        <td>{{ .Name }} {{ if eq .Name $.groupsinfo.Admins}} &#11088; {{ end }}</td>
         <td><a class="nav-link" href="/auth/crud/group/{{ .GIDNumber }}">{{ tr "Edit" }}</a></td>
   </tr>
   {{ end }}
  </tbody>
 </table>
+
+<p>
+<figcaption class="blockquote-footer">
+{{ tr "Special groups" }}:
+{{ tr "Admins" }} : <strong>«{{ .groupsinfo.Admins }}» &#11088;</strong>,
+{{ tr "Users" }} : «{{ .groupsinfo.Users }}»,
+{{ tr "Can use OTP" }} : «{{ .groupsinfo.OTP }}»
+</figcaption>
+</p>
 
 {{ template "global/footer.tmpl" .}}
 {{ end }}
