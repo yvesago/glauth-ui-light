@@ -57,7 +57,8 @@ func TestLogin(t *testing.T) {
 	fmt.Println("= Login")
 	resp, _ := testLogin(t, router, "serviceapp", "dogood", nil) // user without otp
 	assert.Equal(t, 200, resp.Code, "http GET success first user profile")
-	assert.Equal(t, true, strings.Contains(resp.Body.String(), "class=\"navbar-brand\">serviceapp</span>"), "http GET success first user profile")
+	fmt.Printf("%+v\n",resp)
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "> serviceapp</span>"), "http GET success first user profile")
 
 	Data.Users[2].Disabled = true // serviceapp user disabled
 	resp, _ = testLogin(t, router, "serviceapp", "dogood", nil) // user without otp

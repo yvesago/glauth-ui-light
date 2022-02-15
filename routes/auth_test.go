@@ -90,7 +90,7 @@ func TestSession(t *testing.T) {
 	usercookie := cookie
 	assert.Equal(t, 200, resp.Code, "http GET success user login")
 	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "Welcome user"), "http GET success first access user")
-	assert.Equal(t, true, strings.Contains(resp.Body.String(), "class=\"navbar-brand\">user</span>"), "http GET success first access user")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "> user</span>"), "http GET success first access user")
 	// test badlogin
 	resp, cookie, location = testLogin(t, router, "baduser", "dogood")
 	assert.Equal(t, 200, resp.Code, "http GET success first user profile")
@@ -101,7 +101,7 @@ func TestSession(t *testing.T) {
 	admincookie := cookie
 	assert.Equal(t, 200, resp.Code, "http GET success admin login")
 	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "Welcome admin"), "http GET success first access admin")
-	assert.Equal(t, true, strings.Contains(resp.Body.String(), "class=\"navbar-brand\">admin</span>"), "http GET success first access user")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "> admin</span>"), "http GET success first access user")
 	assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-otp\""), "show otp nav")
 	assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
 	//fmt.Printf("=====\n%+v\n",resp)
@@ -111,7 +111,7 @@ func TestSession(t *testing.T) {
 	serviceappcookie := cookie
 	assert.Equal(t, 200, resp.Code, "http GET success serviceapp login")
 	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "Welcome serviceapp"), "http GET success first access serviceapp")
-	assert.Equal(t, true, strings.Contains(resp.Body.String(), "class=\"navbar-brand\">serviceapp</span>"), "http GET success first access user")
+	assert.Equal(t, true, strings.Contains(resp.Body.String(), "> serviceapp</span>"), "http GET success first access user")
 	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-otp\""), "show otp nav")
 	//assert.Equal(t, true, strings.Contains(resp.Body.String(), "id=\"nav-chgpwd\""), "show change password nav")
 
