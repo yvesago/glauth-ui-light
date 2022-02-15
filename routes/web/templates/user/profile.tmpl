@@ -6,10 +6,10 @@
     {{ if .canChgPass }}
     <button class="nav-link {{ if not .navotp }}active{{ end }}" id="nav-chgpwd-tab" data-bs-toggle="tab" data-bs-target="#nav-chgpwd" type="button" role="tab" aria-controls="nav-chgpwd" aria-selected="true">{{ tr "Change password" }}</button>
     {{ end }}
-    <button class="nav-link {{ if not .canChgPass }}active{{end}}" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">{{ tr "Profile" }}</button>
     {{ if .useOtp }}
     <button class="nav-link {{ if .navotp }}active{{ end }}" id="nav-otp-tab" data-bs-toggle="tab" data-bs-target="#nav-otp" type="button" role="tab" aria-controls="nav-otp" aria-selected="false">{{ tr "OTP" }}</button>
     {{ end }}
+    <button class="nav-link {{ if not .canChgPass }}active{{end}}" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">{{ tr "Profile" }}</button>
   </div>
 </nav>
 
@@ -37,11 +37,17 @@
       {{ end }}
     </div>
   </div>
-  <div class="container-fluid">
-   <div class="d-flex justify-content-between">
     <button type="submit" class="btn btn-primary" {{ if .lock }}disabled{{ end }}>{{ tr "Change password" }}</button>
-   </div>
-  </div> 
+    {{ if .u.Errors }}
+    <button id="btnreset" type="button" class="btn btn-secondary"
+       onClick="(function(){
+            $('#inputPassword').val('');
+            $('#inputPassword').removeClass('is-invalid');
+            $('#inputPassword2').val('');
+            $('#inputPassword2').removeClass('is-invalid');
+            $('#btnreset').hide();
+            return true; })();return false;">{{ tr "Reset" }}</button>
+    {{ end }}
 </form>
 </div>
 {{ end }}
@@ -99,7 +105,7 @@
 
 {{ if .useOtp }}
 <div class="tab-pane fade {{ if .navotp }}show active{{ end }}" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab">
-<form class="w-75 p-3" action="/auth/user/otp/{{ .u.UIDNumber }}" method="POST">
+<form id="chgotp" name="chgotp" class="w-75 p-3" action="/auth/user/otp/{{ .u.UIDNumber }}" method="POST">
 <input type="hidden" name="_csrf" value="{{ .Csrf }}">
 <input type="hidden" name="_method" value="PUT">
   <div class="row mb-6">
@@ -113,11 +119,16 @@
      </div>
   </div>
   <div class="row mb-3">
-    <div class="col-sm-3">
-      <input type="password" class="form-control {{ with .u.Errors.OTPSecret }}is-invalid{{ end }}" id="inputOTPSecret" name="inputOTPSecret" value="{{ .u.OTPSecret }}">
+    <div class="col-sm-5">
+      <div class="input-group mb-3" id="show_hide_password">
+        <input type="password" autocomplete="off" class="form-control {{ with .u.Errors.OTPSecret }}is-invalid{{ end }}" id="inputOTPSecret" name="inputOTPSecret" class="block mt-1 w-full" value="{{ .u.OTPSecret }}" />
+        <div class="input-group-text" id="togglePassword" style="cursor: pointer" onClick="toggle_secret()">
+          <i class="bi-eye-slash" aria-hidden="true"></i>
+        </div>
       {{ with .u.Errors.OTPSecret }}
        <div class="invalid-feedback">{{ . }}</div>
       {{ end }}
+      </div>
     </div>
     <div class="col-lg-4">
       <button type="button" id="submit" class="btn btn-warning"
@@ -128,12 +139,21 @@
     </div>
   </div>
   <button type="submit" class="btn btn-primary" {{ if .lock }}disabled{{ end }}>{{ tr "Change Secret" }}</button>
+  {{ if .u.Errors }}
+  <button id="btnreset2" type="button" class="btn btn-secondary"
+       onClick="(function(){
+            $('#inputOTPSecret').val('');
+            $('#inputOTPSecret').removeClass('is-invalid');
+            $('#btnreset2').hide();
+            return true; })();return false;">{{ tr "Reset" }}</button>
+  {{ end }}
 </form>
 </div>
 
 
 <script src="/js/Nibbler.js" crossorigin="anonymous"></script>
 <script>
+
   base32 = new Nibbler({
     dataBits: 8,
     codeBits: 5,
@@ -147,6 +167,20 @@
 
     return random_str.substring(0, length);
   }
+
+  function toggle_secret() {
+        if($('#show_hide_password input').attr("type") == "text"){
+            $('#show_hide_password input').attr('type', 'password');
+            $('#show_hide_password i').addClass( "bi-eye-slash" );
+            $('#show_hide_password i').removeClass( "bi-eye" );
+        }else if($('#show_hide_password input').attr("type") == "password"){
+            $('#show_hide_password input').attr('type', 'text');
+            $('#show_hide_password i').removeClass( "bi-eye-slash" );
+            $('#show_hide_password i').addClass( "bi-eye" );
+        }
+	return true;
+  }
+
 </script>
 {{end}}
 

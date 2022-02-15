@@ -15,6 +15,14 @@
     </div>
   </div>
   <button type="submit" class="btn btn-primary">{{ tr "Create" }}</button>
+  {{ if .u.Errors }}
+  <button id="btnreset" type="button" class="btn btn-secondary"
+       onClick="(function(){
+            $('#inputName').val('');
+            $('#inputName').removeClass('is-invalid');
+            $('#btnreset').hide();
+            return true; })();return false;">{{ tr "Reset" }}</button>
+  {{ end }}
 </form>
 
 

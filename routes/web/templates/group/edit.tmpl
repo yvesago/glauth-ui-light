@@ -17,7 +17,16 @@
   </div>
   <div class="container-fluid">
    <div class="d-flex justify-content-between">
+    <div class="col-sm-6">
     <button type="submit" class="btn btn-primary">{{ tr "Update" }}</button>
+    {{ if .u.Errors }}
+    <button id="btnreset" type="button" class="btn btn-secondary"
+       onClick="(function(){
+            $('#inputName').removeClass('is-invalid');
+            $('#btnreset').hide();
+            return true; })();return false;">{{ tr "Reset" }}</button>
+    {{ end }}
+    </div>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delModal">{{ tr "Delete" }}</button>
    </div>

@@ -70,7 +70,6 @@ func LoginHandler(c *gin.Context) {
 			useOtp := contains(groups, cfg.CfgUsers.GIDuseOtp)
 
 			// redirect to otp if otp group and secret
-			Log.Info("useOtp:", useOtp)
 			if u.OTPSecret != "" && useOtp {
 				s.ReqOTP = true
 				s.User = ""

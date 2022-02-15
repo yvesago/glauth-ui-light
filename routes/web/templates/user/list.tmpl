@@ -19,19 +19,23 @@
   <tr {{ if .Disabled }}class="table-warning"{{end}}>
         <td>{{ .Name }}</td>
 	<td><strong> {{ (index $.hashgroups .PrimaryGroup) }}
-            {{ if eq (index $.hashgroups .PrimaryGroup) $.groupsinfo.Admins }} &#11088; {{end}}
+            {{ if eq (index $.hashgroups .PrimaryGroup) $.groupsinfo.Admins }} <i class="bi-star-fill text-warning"></i> {{end}}
+            {{ if eq (index $.hashgroups .PrimaryGroup) $.groupsinfo.Users }} <i class="bi-person"></i> {{end}}
+            {{ if eq (index $.hashgroups .PrimaryGroup) $.groupsinfo.OTP }} <i class="bi-key"></i> {{end}}
             </strong>
 	    <br />
             {{range .OtherGroups}}
                 {{ (index $.hashgroups .) }}
-                {{ if eq (index $.hashgroups .) $.groupsinfo.Admins }} &#11088; {{end}}
+                {{ if eq (index $.hashgroups .) $.groupsinfo.Admins }} <i class="bi-star-fill text-warning"></i> {{end}}
+                {{ if eq (index $.hashgroups .) $.groupsinfo.Users }} <i class="bi-person"></i> {{end}}
+                {{ if eq (index $.hashgroups .) $.groupsinfo.OTP }} <i class="bi-key"></i> {{end}}
             {{end}}
         </td>
         <td>{{ .GivenName }} {{.SN}}</td>
         <td>{{ .Mail }}</td>
         <td>
           {{ if .Disabled }} <strong>{{ tr "No" }}</strong> {{else}} {{ tr "Yes" }} {{end}}
-          {{ with .OTPSecret }} &#128273; {{end}}
+          {{ with .OTPSecret }} <i class="bi-key-fill"></i>  {{end}}
         </td>
         <td><a class="nav-link" href="/auth/crud/user/{{ .UIDNumber }}">{{ tr "Edit" }}</a></td>
   </tr>
@@ -43,9 +47,9 @@
 <p>
 <figcaption class="blockquote-footer">
 {{ tr "Special groups" }}:
-{{ tr "Admins" }} : <strong>«{{ .groupsinfo.Admins }}» &#11088;</strong>,
-{{ tr "Users" }} : «{{ .groupsinfo.Users }}»,
-{{ tr "Can use OTP" }} : «{{ .groupsinfo.OTP }}»
+{{ tr "Admins" }} <i class="bi-star-fill text-warning"></i>,
+{{ tr "Users" }} <i class="bi-person"></i>,
+{{ tr "Can use OTP" }} <i class="bi-key"></i>
 </figcaption>
 </p>
 

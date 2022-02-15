@@ -1,7 +1,7 @@
 {{ define "user/edit.tmpl"}}
 {{ template "global/header.tmpl" .}}
 
-<form class="w-75 p-3" action="/auth/crud/user/{{ .u.UIDNumber }}" method="POST">
+<form id="myForm" class="w-75 p-3" action="/auth/crud/user/{{ .u.UIDNumber }}" method="POST">
   <input type="hidden" name="_method" value="PUT">
   <input type="hidden" name="_csrf" value="{{ .Csrf }}">
   <div class="row mb-3">
@@ -50,9 +50,9 @@
     <div class="col-lg-4 form-text">
 	{{ tr "Special groups" }}
 	<ul>
-          <li>{{ tr "Admins" }} : <strong>«{{ .groupsinfo.Admins }}» &#11088;</strong>,</li>
-          <li>{{ tr "Users" }} : «{{ .groupsinfo.Users }}»,</li>
-          <li>{{ tr "Can use OTP" }} : «{{ .groupsinfo.OTP }}»</li>
+          <li><i class="bi-star-fill text-warning"></i> {{ tr "Admins" }} : <strong>«{{ .groupsinfo.Admins }}» </strong>,</li>
+          <li><i class="bi-person"></i> {{ tr "Users" }} : «{{ .groupsinfo.Users }}»,</li>
+          <li><i class="bi-key"></i> {{ tr "Can use OTP" }} : «{{ .groupsinfo.OTP }}»</li>
 	</ul>
     </div>
   </div>
@@ -112,7 +112,7 @@
   <div class="row mb-3">
     <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "Password" }}</label>
     <div class="col-sm-6">
-      <input type="password" class="form-control {{ with .u.Errors.Password }}is-invalid{{ end }}" id="inputPassword" name="inputPassword">
+      <input type="password" autocomplete="off" class="form-control {{ with .u.Errors.Password }}is-invalid{{ end }}" id="inputPassword" name="inputPassword">
       {{ with .u.Errors.Password }}
        <div class="invalid-feedback">{{ . }}</div>
       {{ end }}
@@ -120,7 +120,12 @@
   </div>
   <div class="container-fluid">
    <div class="d-flex justify-content-between">
+    <div class="col-sm-6">
     <button type="submit" class="btn btn-primary">{{ tr "Update" }}</button>
+    {{ if .u.Errors }}
+    <button type="button" id="btnreset" class="btn btn-secondary" onClick="resetErrors()">{{ tr "Reset" }}</button>
+    {{ end }}
+    </div>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delModal">{{ tr "Delete" }}</button>
    </div>
@@ -189,6 +194,16 @@
     random_str = base32.encode(random_str);
 
     return random_str.substring(0, length);
+  }
+
+  function resetErrors() {
+    var $inputs = $('#myForm :input');
+    $inputs.each(function (index) {
+          $(this).removeClass('is-invalid');
+         }
+    );
+    $('#btnreset').hide();
+    return true;
   }
 </script>
 

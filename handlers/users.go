@@ -179,7 +179,7 @@ func UserList(c *gin.Context) {
 	for k := range Data.Groups {
 		hg[Data.Groups[k].GIDNumber] = Data.Groups[k].Name
 	}
-	render(c, gin.H{"title": Tr(lang, "Users Page"), "currentPage": "user", "userdata": Data.Users, "hashgroups": hg}, "user/list.tmpl")
+	render(c, gin.H{"title": Tr(lang, "Users page"), "currentPage": "user", "userdata": Data.Users, "hashgroups": hg}, "user/list.tmpl")
 }
 
 func UserEdit(c *gin.Context) {
@@ -565,6 +565,7 @@ func UserChgOTP(c *gin.Context) {
 
 	// Validate new otpsecret or no change
 	if !userf.Validate(cfg.PassPolicy) || otp == (&Data.Users[k]).OTPSecret {
+		userf.OTPSecret = (&Data.Users[k]).OTPSecret
 		render(c, gin.H{"title": u.Name,
 			"currentPage": "profile",
 			"navotp":      true,
