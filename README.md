@@ -29,6 +29,8 @@ Current glauth experimental feature on ``customattributes`` is lost due to the n
 - Authentication with current glauth users if ``allowreadssha256`` is set
 - Admin right is defined for members of group defined in ``gidadmin``
 - Users in group ``gidcanchgpass`` are common users and can change their passwords 
+- Users in group ``giduseotp`` can define and use an One Time Password application like Google Authenticator, andOTP, ...
+
 
 
 ## Missing glauth V2 features
@@ -42,6 +44,7 @@ Current glauth experimental feature on ``customattributes`` is lost due to the n
 - daily log rotates
 - i18n support
 - responsive UI
+- TOTP management
 - delayed after 4 failed login
 - rate requests limiter against brute force ttempts
 - CSRF
@@ -92,6 +95,7 @@ appdesc = "Manage users and groups for glauth ldap server"
   start = 5000           # start with this uid number 
   gidadmin = 5501        # members of this group are admins
   gidcanchgpass = 5500   # members of this group can change their password
+  giduseotp = 5501       # members of this group use OTP
 
 [cfggroups]
   start = 5500   # start with this gid number 
@@ -111,16 +115,17 @@ $ firefox http://localhost:8080/
 Download last deb file from https://github.com/yvesago/glauth-ui-light/releases
 
 ```
-$ sudo dpkg -i glauth-ui-light_1.0.0-0~static0_amd64.deb
+$ sudo dpkg -i glauth-ui-light_1.2.0-0~static0_amd64.deb
 
 $ systemctl status glauth-ui-light
 ● glauth-ui-light.service - Glauth web
-   Loaded: loaded (/lib/systemd/system/glauth-ui-light.service; enabled; vendor preset: enabled)
-   Active: active (running) since Tue 2022-02-08 18:07:00 CET; 1s ago
- Main PID: 8110 (glauth-ui-light)
-    Tasks: 5 (limit: 4915)
-   CGroup: /system.slice/glauth-ui-light.service
-           └─8110 /usr/bin/glauth-ui-light -c /etc/glauth-ui/glauth-ui.cfg
+     Loaded: loaded (/lib/systemd/system/glauth-ui-light.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2022-02-15 18:14:54 CET; 2h 20min ago
+   Main PID: 119451 (glauth-ui-light)
+      Tasks: 7 (limit: 4475)
+     Memory: 5.6M
+     CGroup: /system.slice/glauth-ui-light.service
+             └─119451 /usr/bin/glauth-ui-light -c /etc/glauth-ui/glauth-ui.cfg
 
 # custom config
 $ vi /etc/glauth-ui/glauth-ui.cfg
@@ -141,8 +146,14 @@ $ tail -f /var/log/glauth-ui/app.20220208
 **Change password**
 ![Change password](img/3-changepass.png)
 
+**TOTP**
+![TOTP](img/3-otp.png)
+
 **Manage users**
 ![Users page](img/4-userspage.png)
+
+**Edit user**
+![Edit user](img/4-usersedit.png)
 
 **Delete group**
 ![Delete group](img/5-delgroup.png)
@@ -150,6 +161,7 @@ $ tail -f /var/log/glauth-ui/app.20220208
 **Responsive**
 
 ![Responsive](img/6-responsive.png)
+![Responsive 2](img/6-responsive2.png)
 
 
 ## Localisation
@@ -201,12 +213,12 @@ $  go test -coverprofile=coverage.out ./...
 
 $ go tool cover -func=coverage.out
 ...
-glauth-ui-light/routes/routes.go:78:	initServer		85.4%
-glauth-ui-light/routes/routes.go:174:	SetRoutes		93.5%
-glauth-ui-light/routes/routes.go:220:	contains		100.0%
-glauth-ui-light/routes/routes.go:229:	setCacheHeaders		100.0%
-glauth-ui-light/routes/routes.go:248:	Auth			100.0%
-total:					(statements)		93.7%
+glauth-ui-light/routes/routes.go:79:	initServer		85.4%
+glauth-ui-light/routes/routes.go:182:	SetRoutes		93.8%
+glauth-ui-light/routes/routes.go:230:	contains		100.0%
+glauth-ui-light/routes/routes.go:239:	setCacheHeaders		100.0%
+glauth-ui-light/routes/routes.go:258:	Auth			100.0%
+total:					(statements)		95.2%
 
 # html browser output
 $ go tool cover -html=coverage.out
@@ -228,13 +240,13 @@ $ apt install build-essential quilt
 $ git clone https://github.com/yvesago/glauth-ui-light.git
 $ cd glauth-ui-light
 
-$ debuild -us -uc -b
+$ make deb
 
 # view content
-$ dpkg-deb -c ../glauth-ui-light_1.0.0-0~static0_amd64.deb
+$ dpkg-deb -c ../glauth-ui-light_1.2.0-0~static0_amd64.deb
 
 # install
-$ sudo dpkg -i ../glauth-ui-light_1.0.0-0~static0_amd64.deb
+$ sudo dpkg -i ../glauth-ui-light_1.2.0-0~static0_amd64.deb
 ```
 
 ### Code structure:
@@ -302,6 +314,11 @@ https://vincent.bernat.ch/en/blog/2019-pragmatic-debian-packaging
 
 ## Changelog
 
+v1.2.0:
+  * Add OTP management
+  * tweak UI
+
+
 v1.0.1:
   * fix keep unchanged old sha256 password
   * fix UI mistakes
@@ -313,7 +330,7 @@ v1.0.0:
 
 ## TODO
 
-* Add otp
+* Add app passwords to bypass ldap OTP
 
 
 ## Licence
