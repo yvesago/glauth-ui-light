@@ -59,3 +59,19 @@ func (u *User) ValidOTP(code string, prod bool) bool {
 	}
 	return hotp.Validate(code, 1, u.OTPSecret) // for tests
 }
+
+// passApp methods
+
+func (u *User) AddPassApp(pass string) {
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+	if err == nil {
+		u.PassAppBcrypt = append(u.PassAppBcrypt, hex.EncodeToString(hashedPassword))
+	}
+}
+
+func (u *User) DelPassApp(k int) {
+	if k < len(u.PassAppBcrypt)  && k >= 0{
+		u.PassAppBcrypt = append(u.PassAppBcrypt[:k], u.PassAppBcrypt[k+1:]...)
+	}
+}
