@@ -148,8 +148,35 @@
             return true; })();return false;">{{ tr "Reset" }}</button>
   {{ end }}
 </form>
-</div>
 
+<span class="placeholder col-6 placeholder-xs"></span>
+<h3>Applications tockens</h3>
+Tockens to bypass TOTP for applications with registred password.
+<form id="addpass" name="passapp" class="w-75 p-3" action="/auth/user/passapp/{{ .u.UIDNumber }}" method="POST">
+<input type="hidden" name="_csrf" value="{{ .Csrf }}">
+<input type="hidden" name="_method" value="PUT">
+  <div class="row mb-3">
+     <div class="form-check col-sm-6">
+       {{ range $k,$v := $.u.PassAppBcrypt }}
+         <input type="checkbox" class="form-check-input" value="" id="inputDelPassApp">
+         <label class="form-check-label" for="inputDelPassApp">
+          Delete registered token {{ if $k }}{{$k}}{{ end }}
+         </label>
+       {{end}}
+     </div>
+  </div>
+  <div class="row mb-3">
+     <label for="inputNewPassApp" class="col-sm-2 col-form-label">{{ tr "Add new token" }}</label>
+     <div class="col-sm-6">
+         <input type="password" class="form-control {{ with .u.Errors.PassAppBcrypt }}is-invalid{{ end }}"
+           id="inputNewPassApp" name="inputNewPassApp">
+         {{ with .u.Errors.inputPassAppBcrypt }}
+          <div class="invalid-feedback">{{ . }}</div>
+         {{ end }}
+     </div>
+  </div>
+  <button type="submit" class="btn btn-primary" {{ if .lock }}disabled{{ end }}>{{ tr "Change tokens" }}</button>
+</form>
 
 <script src="/js/Nibbler.js" crossorigin="anonymous"></script>
 <script>

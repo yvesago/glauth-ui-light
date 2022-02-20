@@ -27,19 +27,20 @@ var rxName = regexp.MustCompile("^[a-z0-9]+$")
 var rxBadChar = regexp.MustCompile("[<>&*%$'«».,;:!` ]+")
 
 type UserForm struct {
-	UIDNumber    int
-	Name         string
-	Mail         string
-	SN           string
-	GivenName    string
-	Password     string
-	OTPSecret    string
-	OTPImg       string
-	PrimaryGroup int
-	OtherGroups  []int
-	Disabled     bool
-	Errors       map[string]string
-	Lang         string
+	UIDNumber     int
+	Name          string
+	Mail          string
+	SN            string
+	GivenName     string
+	Password      string
+	OTPSecret     string
+	OTPImg        string
+	PassAppBcrypt []string
+	PrimaryGroup  int
+	OtherGroups   []int
+	Disabled      bool
+	Errors        map[string]string
+	Lang          string
 }
 
 func (userf *UserForm) CreateOTPimg(appname string) {
@@ -198,16 +199,17 @@ func UserEdit(c *gin.Context) {
 
 	u := Data.Users[k]
 	userf := UserForm{
-		UIDNumber:    u.UIDNumber,
-		Mail:         u.Mail,
-		Name:         u.Name,
-		PrimaryGroup: u.PrimaryGroup,
-		OtherGroups:  u.OtherGroups,
-		SN:           u.SN,
-		GivenName:    u.GivenName,
-		Disabled:     u.Disabled,
-		OTPSecret:    u.OTPSecret,
-		Lang:         lang,
+		UIDNumber:     u.UIDNumber,
+		Mail:          u.Mail,
+		Name:          u.Name,
+		PrimaryGroup:  u.PrimaryGroup,
+		OtherGroups:   u.OtherGroups,
+		SN:            u.SN,
+		GivenName:     u.GivenName,
+		Disabled:      u.Disabled,
+		OTPSecret:     u.OTPSecret,
+		PassAppBcrypt: u.PassAppBcrypt,
+		Lang:          lang,
 	}
 
 	if userf.OTPSecret != "" {
@@ -401,16 +403,17 @@ func UserProfile(c *gin.Context) {
 
 	u := Data.Users[k]
 	userf := UserForm{
-		UIDNumber:    u.UIDNumber,
-		Mail:         u.Mail,
-		Name:         u.Name,
-		PrimaryGroup: u.PrimaryGroup,
-		OtherGroups:  u.OtherGroups,
-		SN:           u.SN,
-		GivenName:    u.GivenName,
-		Disabled:     u.Disabled,
-		OTPSecret:    u.OTPSecret,
-		Lang:         lang,
+		UIDNumber:     u.UIDNumber,
+		Mail:          u.Mail,
+		Name:          u.Name,
+		PrimaryGroup:  u.PrimaryGroup,
+		OtherGroups:   u.OtherGroups,
+		SN:            u.SN,
+		GivenName:     u.GivenName,
+		Disabled:      u.Disabled,
+		OTPSecret:     u.OTPSecret,
+		PassAppBcrypt: u.PassAppBcrypt,
+		Lang:          lang,
 	}
 
 	if userf.OTPSecret != "" {
@@ -438,16 +441,17 @@ func UserChgPasswd(c *gin.Context) {
 	role := c.MustGet("Role").(string)
 
 	userf := &UserForm{
-		UIDNumber:    u.UIDNumber,
-		Mail:         u.Mail,
-		Name:         u.Name,
-		PrimaryGroup: u.PrimaryGroup,
-		OtherGroups:  u.OtherGroups,
-		SN:           u.SN,
-		GivenName:    u.GivenName,
-		Disabled:     u.Disabled,
-		OTPSecret:    u.OTPSecret,
-		Lang:         lang,
+		UIDNumber:     u.UIDNumber,
+		Mail:          u.Mail,
+		Name:          u.Name,
+		PrimaryGroup:  u.PrimaryGroup,
+		OtherGroups:   u.OtherGroups,
+		SN:            u.SN,
+		GivenName:     u.GivenName,
+		Disabled:      u.Disabled,
+		OTPSecret:     u.OTPSecret,
+		PassAppBcrypt: u.PassAppBcrypt,
+		Lang:          lang,
 	}
 	userf.Errors = make(map[string]string)
 
@@ -533,16 +537,17 @@ func UserChgOTP(c *gin.Context) {
 	u := Data.Users[k]
 
 	userf := &UserForm{
-		UIDNumber:    u.UIDNumber,
-		Mail:         u.Mail,
-		Name:         u.Name,
-		PrimaryGroup: u.PrimaryGroup,
-		OtherGroups:  u.OtherGroups,
-		SN:           u.SN,
-		GivenName:    u.GivenName,
-		Disabled:     u.Disabled,
-		OTPSecret:    u.OTPSecret,
-		Lang:         lang,
+		UIDNumber:     u.UIDNumber,
+		Mail:          u.Mail,
+		Name:          u.Name,
+		PrimaryGroup:  u.PrimaryGroup,
+		OtherGroups:   u.OtherGroups,
+		SN:            u.SN,
+		GivenName:     u.GivenName,
+		Disabled:      u.Disabled,
+		OTPSecret:     u.OTPSecret,
+		PassAppBcrypt: u.PassAppBcrypt,
+		Lang:          lang,
 	}
 	userf.Errors = make(map[string]string)
 
