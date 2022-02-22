@@ -178,6 +178,14 @@ Tockens to bypass TOTP for applications with registred password.
      </div>
   </div>
   <button type="submit" class="btn btn-primary" {{ if .lock }}disabled{{ end }}>{{ tr "Change tokens" }}</button>
+  {{ if .u.Errors }}
+  <button id="btnreset3" type="button" class="btn btn-secondary"
+       onClick="(function(){
+            $('#inputNewPassApp').val('');
+            $('#inputNewPassApp').removeClass('is-invalid');
+            $('#btnreset3').hide();
+            return true; })();return false;">{{ tr "Reset" }}</button>
+  {{ end }}
 </form>
 
 <script src="/js/Nibbler.js" crossorigin="anonymous"></script>
