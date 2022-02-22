@@ -201,6 +201,7 @@ func SetRoutes(cfg *config.WebConfig) *gin.Engine {
 	u.GET("/:id", UserProfile)
 	u.POST("/:id", UserChgPasswd)
 	u.POST("/otp/:id", UserChgOTP)
+	u.POST("/passapp/:id", UserPassApp)
 
 	admin := r.Group("auth/crud")
 	admin.Use(mw)

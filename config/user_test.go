@@ -123,16 +123,15 @@ func TestPassApp(t *testing.T) {
 	bcryptUser.AddPassApp("test3")
 	assert.Equal(t, 3, len(bcryptUser.PassAppBcrypt), "3 pass app")
 	assert.Equal(t, 120, len(bcryptUser.PassAppBcrypt[0]), "bcrypt pass app")
-	//log.Printf("%+v\n", bcryptUser.PassAppBcrypt)
+	// log.Printf("%+v\n", bcryptUser.PassAppBcrypt)
 
 	bcryptUser.DelPassApp(1)
 	assert.Equal(t, 2, len(bcryptUser.PassAppBcrypt), "remove pass 1")
-	//log.Printf("%+v\n", bcryptUser.PassAppBcrypt)
+	// log.Printf("%+v\n", bcryptUser.PassAppBcrypt)
 
 	bcryptUser.DelPassApp(3)
 	assert.Equal(t, 2, len(bcryptUser.PassAppBcrypt), "do nothing on bad index")
 
 	bcryptUser.DelPassApp(-1)
 	assert.Equal(t, 2, len(bcryptUser.PassAppBcrypt), "do nothing on bad index")
-
 }

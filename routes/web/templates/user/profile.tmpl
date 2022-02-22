@@ -156,21 +156,23 @@ Tockens to bypass TOTP for applications with registred password.
 <input type="hidden" name="_csrf" value="{{ .Csrf }}">
 <input type="hidden" name="_method" value="PUT">
   <div class="row mb-3">
-     <div class="form-check col-sm-6">
+     <div class="col-sm-6">
        {{ range $k,$v := $.u.PassAppBcrypt }}
-         <input type="checkbox" class="form-check-input" value="" id="inputDelPassApp">
-         <label class="form-check-label" for="inputDelPassApp">
+	<div class="form-check">
+         <input class="form-check-input" type="checkbox" id="inputDelPassApp{{$k}}" name="inputDelPassApp{{$k}}">
+         <label class="form-check-label" for="inputDelPassApp{{$k}}">
           Delete registered token {{ if $k }}{{$k}}{{ end }}
          </label>
+	</div>
        {{end}}
      </div>
   </div>
   <div class="row mb-3">
      <label for="inputNewPassApp" class="col-sm-2 col-form-label">{{ tr "Add new token" }}</label>
      <div class="col-sm-6">
-         <input type="password" class="form-control {{ with .u.Errors.PassAppBcrypt }}is-invalid{{ end }}"
+         <input type="password" class="form-control {{ with .u.Errors.NewPassApp }}is-invalid{{ end }}"
            id="inputNewPassApp" name="inputNewPassApp">
-         {{ with .u.Errors.inputPassAppBcrypt }}
+         {{ with .u.Errors.NewPassApp }}
           <div class="invalid-feedback">{{ . }}</div>
          {{ end }}
      </div>

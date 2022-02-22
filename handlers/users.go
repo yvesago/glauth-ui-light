@@ -36,6 +36,7 @@ type UserForm struct {
 	OTPSecret     string
 	OTPImg        string
 	PassAppBcrypt []string
+	NewPassApp    string
 	PrimaryGroup  int
 	OtherGroups   []int
 	Disabled      bool
@@ -76,6 +77,16 @@ func (userf *UserForm) Validate(cfg PassPolicy) bool {
 			userf.Errors["Password"] = Tr(lang, "Too short")
 		case len(p) > cfg.Max:
 			userf.Errors["Password"] = Tr(lang, "Too long")
+		}
+	}
+
+	np := userf.NewPassApp
+	if np != "" {
+		switch {
+		case len(np) < cfg.Min:
+			userf.Errors["NewPassApp"] = Tr(lang, "Too short")
+		case len(np) > cfg.Max:
+			userf.Errors["NewPassApp"] = Tr(lang, "Too long")
 		}
 	}
 
@@ -387,6 +398,8 @@ func UserDel(c *gin.Context) {
 	c.Redirect(302, "/auth/crud/user")
 }
 
+// Self user handlers
+
 func UserProfile(c *gin.Context) {
 	cfg := c.MustGet("Cfg").(WebConfig)
 	lang := cfg.Locale.Lang
@@ -428,7 +441,8 @@ func UserChgPasswd(c *gin.Context) {
 	lang := cfg.Locale.Lang
 	id := c.Params.ByName("id")
 
-	if !isSelfAccess(c, "UserProfile", id) {
+	// Ctrl access
+	if !isSelfAccess(c, "UserChgPasswd", id) {
 		return
 	}
 
@@ -437,6 +451,7 @@ func UserChgPasswd(c *gin.Context) {
 		return
 	}
 
+	// Ctrl access with message
 	u := Data.Users[k]
 	role := c.MustGet("Role").(string)
 
@@ -460,8 +475,19 @@ func UserChgPasswd(c *gin.Context) {
 	}
 
 	// application accounts don't change their password
-	if role != "admin" && role != "user" { // users and admins are defined by group set by GIDcanChgPass, GIDAdmin config
-		render(c, gin.H{"title": u.Name, "currentPage": "profile", "u": userf, "groupdata": Data.Groups}, "user/profile.tmpl")
+	// users and admins are defined by group set by GIDcanChgPass, GIDAdmin config
+	if (role != "admin" && role != "user") || Lock != 0 {
+		warning := ""
+		if Lock != 0 {
+			warning = Tr(lang, "Data locked by admin.")
+		}
+		render(c, gin.H{
+			"title":       u.Name,
+			"currentPage": "profile",
+			"warning":     warning,
+			"u":           userf,
+			"groupdata":   Data.Groups},
+			"user/profile.tmpl")
 		return
 	}
 
@@ -496,28 +522,19 @@ func UserChgPasswd(c *gin.Context) {
 	username := c.MustGet("Login").(string)
 	Log.Info(fmt.Sprintf("%s -- %s password changed by %s", c.ClientIP(), u.Name, username))
 
-	if Lock != 0 {
-		render(c, gin.H{
-			"title":       u.Name,
-			"currentPage": "profile",
-			"warning":     Tr(lang, "Data locked by admin."),
-			"u":           userf,
-			"groupdata":   Data.Groups},
-			"user/profile.tmpl")
-	} else {
-		err := WriteDB(&cfg, Data, username)
-		if err != nil {
-			render(c, gin.H{"title": Tr(lang, "Error"), "currentPage": "profile", "error": err.Error()}, "home/error.tmpl")
-		} else {
-			render(c, gin.H{
-				"title":       u.Name,
-				"currentPage": "profile",
-				"success":     Tr(lang, "Password updated"),
-				"u":           userf,
-				"groupdata":   Data.Groups},
-				"user/profile.tmpl")
-		}
+	err := WriteDB(&cfg, Data, username)
+	if err != nil {
+		render(c, gin.H{"title": Tr(lang, "Error"), "currentPage": "profile", "error": err.Error()}, "home/error.tmpl")
+		return
 	}
+
+	render(c, gin.H{
+		"title":       u.Name,
+		"currentPage": "profile",
+		"success":     Tr(lang, "Password updated"),
+		"u":           userf,
+		"groupdata":   Data.Groups},
+		"user/profile.tmpl")
 }
 
 func UserChgOTP(c *gin.Context) {
@@ -525,7 +542,8 @@ func UserChgOTP(c *gin.Context) {
 	lang := cfg.Locale.Lang
 	id := c.Params.ByName("id")
 
-	if !isSelfAccess(c, "UserProfile", id) {
+	// Ctrl access
+	if !isSelfAccess(c, "UserChgOTP", id) {
 		return
 	}
 
@@ -534,6 +552,7 @@ func UserChgOTP(c *gin.Context) {
 		return
 	}
 
+	// Ctrl access with message
 	u := Data.Users[k]
 
 	userf := &UserForm{
@@ -559,9 +578,19 @@ func UserChgOTP(c *gin.Context) {
 	groups = append(groups, u.PrimaryGroup)
 	useOtp := contains(groups, cfg.CfgUsers.GIDuseOtp)
 
-	// application accounts don't change their password
-	if !useOtp { // only for members of GIDuseOtp
-		render(c, gin.H{"title": u.Name, "currentPage": "profile", "u": userf, "groupdata": Data.Groups}, "user/profile.tmpl")
+	if !useOtp || Lock != 0 { // only for members of GIDuseOtp
+		warning := ""
+		if Lock != 0 {
+			warning = Tr(lang, "Data locked by admin.")
+		}
+		render(c, gin.H{
+			"title":       u.Name,
+			"currentPage": "profile",
+			"warning":     warning,
+			"navotp":      true,
+			"u":           userf,
+			"groupdata":   Data.Groups},
+			"user/profile.tmpl")
 		return
 	}
 
@@ -584,31 +613,132 @@ func UserChgOTP(c *gin.Context) {
 	username := c.MustGet("Login").(string)
 	Log.Info(fmt.Sprintf("%s -- %s otp secret changed by %s", c.ClientIP(), u.Name, username))
 
-	if Lock != 0 {
+	err := WriteDB(&cfg, Data, username)
+	if err != nil {
+		render(c, gin.H{"title": Tr(lang, "Error"), "currentPage": "profile", "error": err.Error()}, "home/error.tmpl")
+		return
+	}
+
+	if userf.OTPSecret != "" {
+		userf.CreateOTPimg(cfg.AppName)
+	}
+
+	render(c, gin.H{
+		"title":       u.Name,
+		"currentPage": "profile",
+		"success":     Tr(lang, "OTP updated"),
+		"navotp":      true,
+		"u":           userf,
+		"groupdata":   Data.Groups},
+		"user/profile.tmpl")
+}
+
+func UserPassApp(c *gin.Context) {
+	cfg := c.MustGet("Cfg").(WebConfig)
+	lang := cfg.Locale.Lang
+	id := c.Params.ByName("id")
+
+	// Ctrl access
+	if !isSelfAccess(c, "UserPassApp", id) {
+		return
+	}
+
+	k := ctlUserExist(c, lang, id)
+	if k < 0 {
+		return
+	}
+
+	// Ctrl access with message
+	u := Data.Users[k]
+
+	userf := &UserForm{
+		UIDNumber:     u.UIDNumber,
+		Mail:          u.Mail,
+		Name:          u.Name,
+		PrimaryGroup:  u.PrimaryGroup,
+		OtherGroups:   u.OtherGroups,
+		SN:            u.SN,
+		GivenName:     u.GivenName,
+		Disabled:      u.Disabled,
+		OTPSecret:     u.OTPSecret,
+		PassAppBcrypt: u.PassAppBcrypt,
+		Lang:          lang,
+	}
+	userf.Errors = make(map[string]string)
+
+	if userf.OTPSecret != "" {
+		userf.CreateOTPimg(cfg.AppName)
+	}
+
+	groups := u.OtherGroups
+	groups = append(groups, u.PrimaryGroup)
+	useOtp := contains(groups, cfg.CfgUsers.GIDuseOtp)
+
+	if !useOtp || Lock != 0 { // only for members of GIDuseOtp
+		warning := ""
+		if Lock != 0 {
+			warning = Tr(lang, "Data locked by admin.")
+		}
 		render(c, gin.H{
 			"title":       u.Name,
 			"currentPage": "profile",
-			"warning":     Tr(lang, "Data locked by admin."),
+			"warning":     warning,
 			"navotp":      true,
 			"u":           userf,
 			"groupdata":   Data.Groups},
 			"user/profile.tmpl")
-	} else {
-		err := WriteDB(&cfg, Data, username)
-		if err != nil {
-			render(c, gin.H{"title": Tr(lang, "Error"), "currentPage": "profile", "error": err.Error()}, "home/error.tmpl")
-		} else {
-			if userf.OTPSecret != "" {
-				userf.CreateOTPimg(cfg.AppName)
-			}
-			render(c, gin.H{
-				"title":       u.Name,
+		return
+	}
+
+	// Read input
+	username := c.MustGet("Login").(string)
+
+	userf.NewPassApp = c.PostForm("inputNewPassApp")
+
+	// Validate and register newpass
+	change := false
+	if userf.NewPassApp != "" {
+		if !userf.Validate(cfg.PassPolicy) {
+			render(c, gin.H{"title": u.Name,
 				"currentPage": "profile",
-				"success":     Tr(lang, "OTP updated"),
 				"navotp":      true,
 				"u":           userf,
-				"groupdata":   Data.Groups},
-				"user/profile.tmpl")
+				"groupdata":   Data.Groups}, "user/profile.tmpl")
+			return
+		}
+
+		(&Data.Users[k]).AddPassApp(userf.NewPassApp)
+		change = true
+		Log.Info(fmt.Sprintf("%s -- %s passapp added by %s", c.ClientIP(), u.Name, username))
+	}
+
+	// Manage removed pass app
+	for d := 0; d < 3; d++ {
+		input := fmt.Sprintf("inputDelPassApp%d", d)
+		delpass := c.PostForm(input)
+		if delpass != "" {
+			(&Data.Users[k]).DelPassApp(d)
+			change = true
+			Log.Info(fmt.Sprintf("%s -- %s passapp removed %d by %s", c.ClientIP(), u.Name, d, username))
 		}
 	}
+
+	if change {
+		userf.PassAppBcrypt = Data.Users[k].PassAppBcrypt
+	}
+
+	err := WriteDB(&cfg, Data, username)
+	if err != nil {
+		render(c, gin.H{"title": Tr(lang, "Error"), "currentPage": "profile", "error": err.Error()}, "home/error.tmpl")
+		return
+	}
+
+	render(c, gin.H{
+		"title":       u.Name,
+		"currentPage": "profile",
+		"success":     Tr(lang, "Tokens changed"),
+		"navotp":      true,
+		"u":           userf,
+		"groupdata":   Data.Groups},
+		"user/profile.tmpl")
 }

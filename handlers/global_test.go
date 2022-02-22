@@ -34,7 +34,7 @@ func deleteFile(file string) {
 	var err = os.Remove(file)
 	if err != nil {
 		fmt.Println(err.Error())
-		os.Exit(0)
+		//os.Exit(0)
 	}
 }
 
@@ -51,6 +51,7 @@ func resetData() {
 func clean(file string) {
 	resetData()
 	deleteFile(file + ".1")
+	deleteFile(file + ".2")
 	copyTmpFile(file+".orig", file)
 	deleteFile(file)
 }

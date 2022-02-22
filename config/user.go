@@ -63,7 +63,6 @@ func (u *User) ValidOTP(code string, prod bool) bool {
 // passApp methods
 
 func (u *User) AddPassApp(pass string) {
-
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
 	if err == nil {
 		u.PassAppBcrypt = append(u.PassAppBcrypt, hex.EncodeToString(hashedPassword))
@@ -71,7 +70,7 @@ func (u *User) AddPassApp(pass string) {
 }
 
 func (u *User) DelPassApp(k int) {
-	if k < len(u.PassAppBcrypt)  && k >= 0{
+	if k < len(u.PassAppBcrypt) && k >= 0 {
 		u.PassAppBcrypt = append(u.PassAppBcrypt[:k], u.PassAppBcrypt[k+1:]...)
 	}
 }
