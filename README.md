@@ -38,13 +38,14 @@ Current glauth experimental feature on ``customattributes`` is lost due to the n
 Current glauth experimental feature on ``customattributes`` is lost due to the need of a patched toml library.
 
 
-## Some overkill features for a self hosted infrastrucuture
+## Some overkill features for a self hosted infrastructure
 
 - only register bcrypt passwords
 - daily log rotates
 - i18n support
 - responsive UI
 - TOTP management
+- Bcrypt tokens to bypass TOTP
 - delayed after 4 failed login
 - rate requests limiter against brute force ttempts
 - CSRF
@@ -214,11 +215,11 @@ $  go test -coverprofile=coverage.out ./...
 $ go tool cover -func=coverage.out
 ...
 glauth-ui-light/routes/routes.go:79:	initServer		85.4%
-glauth-ui-light/routes/routes.go:182:	SetRoutes		93.8%
+glauth-ui-light/routes/routes.go:182:	SetRoutes		93.9%
 glauth-ui-light/routes/routes.go:230:	contains		100.0%
 glauth-ui-light/routes/routes.go:239:	setCacheHeaders		100.0%
 glauth-ui-light/routes/routes.go:258:	Auth			100.0%
-total:					(statements)		95.2%
+total:					(statements)		95.1%
 
 # html browser output
 $ go tool cover -html=coverage.out
@@ -265,6 +266,7 @@ main.go
     |-global.go   // global var, render
     |-login.go
     |-users.go
+    |-userProfile.go
     |-groups.go
 |- routes
     |-routes.go   // load template, i18n. Set routes, auth middleware
@@ -314,6 +316,11 @@ https://vincent.bernat.ch/en/blog/2019-pragmatic-debian-packaging
 
 ## Changelog
 
+v1.4.0:
+  * Add app passwords (tokens) to bypass ldap OTP (bcrypt only)
+  * fix denied changes on Lock
+
+
 v1.2.0:
   * Add OTP management
   * tweak UI
@@ -327,10 +334,6 @@ v1.0.1:
 v1.0.0:
   * initial release
 
-
-## TODO
-
-* Add app passwords to bypass ldap OTP
 
 
 ## Licence
