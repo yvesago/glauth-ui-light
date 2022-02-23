@@ -149,6 +149,7 @@
   {{ end }}
 </form>
 
+{{ if .u.OTPSecret }}
 <span class="placeholder col-6 placeholder-xs"></span>
 <h3>Applications tockens</h3>
 Tockens to bypass TOTP for applications with registred password.
@@ -161,12 +162,13 @@ Tockens to bypass TOTP for applications with registred password.
 	<div class="form-check">
          <input class="form-check-input" type="checkbox" id="inputDelPassApp{{$k}}" name="inputDelPassApp{{$k}}">
          <label class="form-check-label" for="inputDelPassApp{{$k}}">
-          Delete token "{{ $k }}"
+          {{ tr "Delete token" }} «{{ $k }}»
          </label>
 	</div>
        {{end}}
      </div>
   </div>
+  {{ $length := len .u.PassAppBcrypt }} {{ if lt $length 3 }}
   <div class="row mb-3">
      <label for="inputNewPassApp" class="col-sm-2 col-form-label">{{ tr "Add new token" }}</label>
      <div class="col-sm-6">
@@ -177,6 +179,7 @@ Tockens to bypass TOTP for applications with registred password.
          {{ end }}
      </div>
   </div>
+  {{ end }}
   <button type="submit" class="btn btn-primary" {{ if .lock }}disabled{{ end }}>{{ tr "Change tokens" }}</button>
   {{ if .u.Errors }}
   <button id="btnreset3" type="button" class="btn btn-secondary"
@@ -187,6 +190,7 @@ Tockens to bypass TOTP for applications with registred password.
             return true; })();return false;">{{ tr "Reset" }}</button>
   {{ end }}
 </form>
+{{ end }}
 
 <script src="/js/Nibbler.js" crossorigin="anonymous"></script>
 <script>

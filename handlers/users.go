@@ -271,18 +271,19 @@ func UserUpdate(c *gin.Context) {
 
 	// Bind form to struct
 	userf := &UserForm{
-		UIDNumber:    Data.Users[k].UIDNumber,
-		Mail:         c.PostForm("inputMail"),
-		Name:         c.PostForm("inputName"),
-		SN:           c.PostForm("inputSN"),
-		GivenName:    c.PostForm("inputGivenName"),
-		Password:     c.PostForm("inputPassword"),
-		OTPSecret:    c.PostForm("inputOTPSecret"),
-		NewPassApp:   c.PostForm("inputNewPassApp"),
-		PrimaryGroup: pg,
-		OtherGroups:  og,
-		Disabled:     d,
-		Lang:         lang,
+		UIDNumber:     Data.Users[k].UIDNumber,
+		Mail:          c.PostForm("inputMail"),
+		Name:          c.PostForm("inputName"),
+		SN:            c.PostForm("inputSN"),
+		GivenName:     c.PostForm("inputGivenName"),
+		Password:      c.PostForm("inputPassword"),
+		OTPSecret:     c.PostForm("inputOTPSecret"),
+		NewPassApp:    c.PostForm("inputNewPassApp"),
+		PassAppBcrypt: Data.Users[k].PassAppBcrypt,
+		PrimaryGroup:  pg,
+		OtherGroups:   og,
+		Disabled:      d,
+		Lang:          lang,
 	}
 	// fmt.Printf("%+v\n", userf)
 	if userf.OTPSecret != "" {

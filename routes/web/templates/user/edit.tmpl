@@ -118,21 +118,24 @@
           <div class="form-check form-check-inline">
            <input class="form-check-input" type="checkbox" id="inputDelPassApp{{$k}}" name="inputDelPassApp{{$k}}">
            <label class="form-check-label" for="inputDelPassApp{{$k}}">
-            Delete token "{{ $k }}"
+            {{ tr "Delete token" }} «{{ $k }}»
            </label>
           </div>
          {{end}}
 	</div>
       </div>
+      {{ $length := len .u.PassAppBcrypt }} {{ if lt $length 3 }}
       <div class="row mb-3">
-        <div class="col-sm-12">
+        <div class="form-floating col-sm-12">
         <input type="password" autocomplete="off" class="form-control {{ with .u.Errors.NewPassApp }}is-invalid{{ end }}" id="inputNewPassApp" name="inputNewPassApp">
+        <label for="inputNewPassApp">{{ tr "Add new token" }}</label>
         <div id="otpHelp1" class="form-text">{{ tr "Only for group" }}: «{{ .groupsinfo.OTP }}»</div>
         {{ with .u.Errors.NewPassApp }}
          <div class="invalid-feedback">{{ . }}</div>
         {{ end }}
 	</div>
       </div>
+      {{ end }}
     </div>
     <div class="col-lg-4 form-text">
 	{{ tr "Tokens to bypass OTP for applications with registered password" }}
