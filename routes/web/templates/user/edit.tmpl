@@ -110,6 +110,35 @@
     </div>
   </div>
   <div class="row mb-3">
+    <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "Tokens" }}</label>
+    <div class="col-sm-6">
+      <div class="row mb-3">
+        <div class="col-sm-12">
+         {{ range $k,$v := $.u.PassAppBcrypt }}
+          <div class="form-check form-check-inline">
+           <input class="form-check-input" type="checkbox" id="inputDelPassApp{{$k}}" name="inputDelPassApp{{$k}}">
+           <label class="form-check-label" for="inputDelPassApp{{$k}}">
+            Delete token "{{ $k }}"
+           </label>
+          </div>
+         {{end}}
+	</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-sm-12">
+        <input type="password" autocomplete="off" class="form-control {{ with .u.Errors.NewPassApp }}is-invalid{{ end }}" id="inputNewPassApp" name="inputNewPassApp">
+        <div id="otpHelp1" class="form-text">{{ tr "Only for group" }}: «{{ .groupsinfo.OTP }}»</div>
+        {{ with .u.Errors.NewPassApp }}
+         <div class="invalid-feedback">{{ . }}</div>
+        {{ end }}
+	</div>
+      </div>
+    </div>
+    <div class="col-lg-4 form-text">
+	{{ tr "Tokens to bypass OTP for applications with registered password" }}
+    </div>
+  </div>
+  <div class="row mb-3">
     <label for="inputPassword" class="col-sm-2 col-form-label">{{ tr "Password" }}</label>
     <div class="col-sm-6">
       <input type="password" autocomplete="off" class="form-control {{ with .u.Errors.Password }}is-invalid{{ end }}" id="inputPassword" name="inputPassword">

@@ -248,6 +248,7 @@ func TestUserHandlers(t *testing.T) {
 	form.Add("inputOtherGroup", "1")
 	form.Add("inputOtherGroup", "2")
 	form.Add("inputOTPSecret", "gvxdgn3hpfvwu2lhmz3gmm3z")
+	form.Add("inputNewPassApp", "pass1")
 	req, err = http.NewRequest("POST", Url+"/5001", strings.NewReader(form.Encode()))
 	req.PostForm = form
 	req.Header.Add("Content-Type", "application/x-www-form-Urlencoded")
@@ -259,6 +260,7 @@ func TestUserHandlers(t *testing.T) {
 	assert.Equal(t, 64, len(Data.Users[0].PassSHA256), "don't  change sha256 pass")
 	assert.Equal(t, "", Data.Users[0].PassBcrypt, "no bcrypt, don't change sha256 pass")
 	assert.Equal(t, true, strings.Contains(resp.Body.String(), "gvxdgn3hpfvwu2lhmz3gmm3z"), "OTP secret")
+	assert.Equal(t, 1, len(Data.Users[0].PassAppBcrypt), "1 PassApp")
 
 	fmt.Println("= http Update only Password")
 	form = url.Values{}
@@ -266,6 +268,7 @@ func TestUserHandlers(t *testing.T) {
 	form.Add("inputMail", "test@exemple.com")              // to be set
 	form.Add("inputOTPSecret", "gvxdgn3hpfvwu2lhmz3gmm3z") // to be set
 	form.Add("inputPassword", "somePass")
+	form.Add("inputDelPassApp0", "on")
 	req, err = http.NewRequest("POST", Url+"/5001", strings.NewReader(form.Encode()))
 	req.PostForm = form
 	req.Header.Add("Content-Type", "application/x-www-form-Urlencoded")
@@ -276,6 +279,7 @@ func TestUserHandlers(t *testing.T) {
 	assert.Equal(t, "test@exemple.com", Data.Users[0].Mail, "new user2 mail")
 	assert.Equal(t, "", Data.Users[0].PassSHA256, "no more sha256 pass")
 	assert.Equal(t, 120, len(Data.Users[0].PassBcrypt), "bcrypt pass length")
+	assert.Equal(t, 0, len(Data.Users[0].PassAppBcrypt), "no more PassApp")
 
 	req, _ = http.NewRequest("GET", Url+"/5001", nil)
 	resp = httptest.NewRecorder()

@@ -161,7 +161,7 @@ Tockens to bypass TOTP for applications with registred password.
 	<div class="form-check">
          <input class="form-check-input" type="checkbox" id="inputDelPassApp{{$k}}" name="inputDelPassApp{{$k}}">
          <label class="form-check-label" for="inputDelPassApp{{$k}}">
-          Delete registered token {{ if $k }}{{$k}}{{ end }}
+          Delete token "{{ $k }}"
          </label>
 	</div>
        {{end}}

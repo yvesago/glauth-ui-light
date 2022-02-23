@@ -278,6 +278,7 @@ func UserUpdate(c *gin.Context) {
 		GivenName:    c.PostForm("inputGivenName"),
 		Password:     c.PostForm("inputPassword"),
 		OTPSecret:    c.PostForm("inputOTPSecret"),
+		NewPassApp:   c.PostForm("inputNewPassApp"),
 		PrimaryGroup: pg,
 		OtherGroups:  og,
 		Disabled:     d,
@@ -308,6 +309,18 @@ func UserUpdate(c *gin.Context) {
 		(&Data.Users[k]).PassSHA256 = "" // no more use of SHA256
 		(&Data.Users[k]).SetBcryptPass(userf.Password)
 	}
+
+	for d := 0; d < 3; d++ {
+		input := fmt.Sprintf("inputDelPassApp%d", d)
+		delpass := c.PostForm(input)
+		if delpass != "" {
+			(&Data.Users[k]).DelPassApp(d)
+		}
+	}
+	if userf.NewPassApp != "" {
+		(&Data.Users[k]).AddPassApp(userf.NewPassApp)
+	}
+	userf.PassAppBcrypt = Data.Users[k].PassAppBcrypt
 
 	Lock++
 
