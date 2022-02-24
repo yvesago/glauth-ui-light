@@ -60,29 +60,32 @@ func setConfig(cfg *config.WebConfig) gin.HandlerFunc {
 	}
 }
 
-func LoadTls(port string) gin.HandlerFunc {
+func secureHeaders() gin.HandlerFunc {
 	return secure.New(secure.Config{
-		SSLRedirect:           true,
-		SSLHost:               port,
-		STSSeconds:            315360000,
-		STSIncludeSubdomains:  true,
 		FrameDeny:             true,
 		ContentTypeNosniff:    true,
 		BrowserXssFilter:      true,
 		ContentSecurityPolicy: "default-src 'self' 'unsafe-inline'; img-src 'self' data:",
 		IENoOpen:              true,
 		ReferrerPolicy:        "strict-origin-when-cross-origin",
-		SSLProxyHeaders:       map[string]string{"X-Forwarded-Proto": "https"},
+	})
+}
+
+func sslHeaders(port string) gin.HandlerFunc {
+	return secure.New(secure.Config{
+		SSLRedirect:          true,
+		SSLHost:              port,
+		STSSeconds:           315360000,
+		STSIncludeSubdomains: true,
+		SSLProxyHeaders:      map[string]string{"X-Forwarded-Proto": "https"},
 	})
 }
 
 func initServer(cfg *config.WebConfig) *gin.Engine {
 	r := gin.New()
 
-	rate, e := limiter.NewRateFromFormatted("60-M") // 60 reqs/minute
-	if e != nil {
-		panic(e)
-	}
+	rate, _ := limiter.NewRateFromFormatted("60-M") // 60 reqs/minute
+
 	lStore := memory.NewStore()
 	limitMiddleware := mgin.NewMiddleware(limiter.New(lStore, rate))
 
@@ -124,8 +127,11 @@ func initServer(cfg *config.WebConfig) *gin.Engine {
 	}
 	r.Use(MiddlewareSession(useSSL))
 	if useSSL {
-		r.Use(LoadTls(cfg.Port))
+		r.Use(sslHeaders(cfg.Port))
 	}
+
+	// Secure headers
+	r.Use(secureHeaders())
 
 	// Load templates
 	baseLocalesPath := cfg.Locale.Path
