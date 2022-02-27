@@ -89,6 +89,8 @@
       <input type="checkbox" class="check-input" name="inputDisabled" id="inputDisabled" {{if .u.Disabled }}checked{{end}}>
     </div>
   </div>
+
+  {{ if not .MaskOTP }}
   <div class="row mb-3">
     <label for="inputOTPSecret" class="col-sm-2 col-form-label">{{ tr "OTP" }}</label>
     <div class="col-sm-6">
@@ -137,6 +139,8 @@
       </div>
       {{ end }}
     </div>
+    {{ end }}
+
     <div class="col-lg-4 form-text">
 	{{ tr "Tokens to bypass OTP for applications with registered password" }}
     </div>

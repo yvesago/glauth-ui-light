@@ -8,6 +8,7 @@ type Ctmp struct {
 type WebConfig struct {
 	AppName    string
 	AppDesc    string
+	MaskOTP    bool
 	Port       string
 	DBfile     string
 	Debug      bool

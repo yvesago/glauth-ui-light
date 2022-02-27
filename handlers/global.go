@@ -63,6 +63,7 @@ func render(c *gin.Context, data gin.H, templateName string) {
 	data["lock"] = Lock
 	data["version"] = Version
 	data["appname"], _ = c.Get("AppName")
+	data["MaskOTP"], _ = c.Get("MaskOTP")
 
 	canChgPass, _ := c.Get("CanChgPass")
 	if canChgPass != nil {

@@ -298,6 +298,7 @@ func Auth(rolectl string) gin.HandlerFunc {
 		c.Set("LoginID", userid)
 		c.Set("Role", role)
 		c.Set("AppName", cfg.AppName)
+		c.Set("MaskOTP", cfg.MaskOTP)
 		Log.Info(fmt.Sprintf("%s -- OK [%s] (%s) valid access", c.ClientIP(), username, userid))
 	}
 }
