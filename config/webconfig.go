@@ -47,6 +47,7 @@ type PassPolicy struct {
 	Min              int
 	Max              int
 	AllowReadSSHA256 bool
+	Entropy          float64
 }
 
 type CfgUsers struct {

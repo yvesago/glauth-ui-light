@@ -15,6 +15,8 @@ import (
 
 	"github.com/pquerna/otp"
 
+	passwordvalidator "github.com/wagslane/go-password-validator"
+
 	. "glauth-ui-light/config"
 	. "glauth-ui-light/helpers"
 )
@@ -77,6 +79,11 @@ func (userf *UserForm) Validate(cfg PassPolicy) bool {
 			userf.Errors["Password"] = Tr(lang, "Too short")
 		case len(p) > cfg.Max:
 			userf.Errors["Password"] = Tr(lang, "Too long")
+		case cfg.Entropy != 0:
+			err := passwordvalidator.Validate(p, cfg.Entropy)
+			if err != nil {
+				userf.Errors["Password"] = Tr(lang, "Insecure password")
+			}
 		}
 	}
 

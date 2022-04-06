@@ -56,6 +56,7 @@ func TestUserModel(t *testing.T) {
 		},
 		PassPolicy: PassPolicy{
 			AllowReadSSHA256: true,
+			Entropy:          60,
 		},
 	}
 

@@ -30,6 +30,7 @@ func TestUserValidate(t *testing.T) {
 			Min:              2,
 			Max:              8,
 			AllowReadSSHA256: true,
+			Entropy:          60,
 		},
 	}
 	InitRouterTest(cfg)
@@ -46,7 +47,7 @@ func TestUserValidate(t *testing.T) {
 		assert.Equal(t, false, v, "bad Name form: "+tf.Errors["Name"])
 	}
 
-	for _, s := range []string{"u", "va2ieYeidafee8Gi0"} {
+	for _, s := range []string{"u", "test", "va2ieYeidafee8Gi0"} {
 		tf := UserForm{
 			Name:     "test",
 			Password: s,

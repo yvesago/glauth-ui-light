@@ -47,7 +47,8 @@ Current glauth experimental feature on ``customattributes`` is lost due to the n
 - TOTP management
 - Bcrypt tokens to bypass TOTP
 - delayed after 4 failed login
-- rate requests limiter against brute force ttempts
+- rate requests limiter against brute force attempts
+- password strength
 - CSRF
 - STS, CSP
 - standalone SSL or via reverse proxy
@@ -91,6 +92,8 @@ appdesc = "Manage users and groups for glauth ldap server"
   min = 2
   max = 24
   allowreadssha256 = true  # to be set to false when all passwords are bcrypt
+  entropy = 60             # optional password constraint
+
 
 [cfgusers]
   start = 5000           # start with this uid number 
@@ -313,8 +316,14 @@ https://www.alexedwards.net/blog/form-validation-and-processing
 
 https://vincent.bernat.ch/en/blog/2019-pragmatic-debian-packaging
 
+https://github.com/wagslane/go-password-validator
+
 
 ## Changelog
+
+v1.4.1:
+  * Add optional password strength constraint
+
 
 v1.4.0:
   * Add app passwords (tokens) to bypass ldap OTP (bcrypt only)
