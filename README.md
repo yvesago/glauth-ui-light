@@ -321,6 +321,9 @@ https://github.com/wagslane/go-password-validator
 
 ## Changelog
 
+v1.4.2:
+  * Add spanish translations. Thx to Iago Sardiña.
+
 v1.4.1:
   * Add optional password strength constraint
 
