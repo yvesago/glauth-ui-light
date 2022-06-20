@@ -73,6 +73,24 @@
        <div class="invalid-feedback">{{ . }}</div>
       {{ end }}
     </div>
+   </div>
+  <div class="row mb-3">
+    <label for="inputTelephone" class="col-sm-2 col-form-label">{{ tr "Telephone" }}</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control {{ with .u.Errors.Telephone }}is-invalid{{ end }}" name="inputTelephone" id="inputTelephone" value="{{ .u.Telephone }}">
+      {{ with .u.Errors.Telephone }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="inputMobile" class="col-sm-2 col-form-label">{{ tr "Mobile" }}</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control {{ with .u.Errors.Mobile }}is-invalid{{ end }}" name="inputMobile" id="inputMobile" value="{{ .u.Mobile }}">
+      {{ with .u.Errors.Mobile }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
   </div>
   <div class="row mb-3">
     <label for="inputMail" class="col-sm-2 col-form-label">{{ tr "Mail" }}</label>
