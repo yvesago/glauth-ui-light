@@ -33,7 +33,6 @@
     <label for="inputOtherGroup" class="col-sm-2 col-form-label">{{ tr "Others" }}</label>
     <div class="col-sm-6">
       <select class="form-select {{ with .u.Errors.OtherGroups }}is-invalid{{ end }}" multiple="" name="inputOtherGroup" id="inputOtherGroup" aria-label="multiple select other groups">
-	<option value="0"> </option>
 	{{ range .groupdata }}
         <option value="{{ .GIDNumber }}" 
          {{ with $t := .GIDNumber}}
