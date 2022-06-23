@@ -80,7 +80,7 @@ func (userf *UserForm) Validate(cfg PassPolicy) bool {
 		case len(p) > cfg.Max:
 			userf.Errors["Password"] = Tr(lang, "Too long")
 		case cfg.Entropy != 0:
-			err := passwordvalidator.Validate(p, cfg.Entropy)
+			err := passwordvalidator.Validate(p, float64(cfg.Entropy))
 			if err != nil {
 				userf.Errors["Password"] = Tr(lang, "Insecure password")
 			}
