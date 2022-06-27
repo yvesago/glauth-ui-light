@@ -1,17 +1,14 @@
 {{ define "global/header.tmpl" }}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en" class="h-100">
 <head>
- <!-- Latest compiled and minified CSS -->
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <link href="/css/bootstrap-icons.css" rel="stylesheet" integrity="sha384-He3RckdFB2wffiHOcESa3sf4Ida+ni/fw9SSzAcfY2EPnU1zkK/sLUzw2C5Tyuhj" crossorigin="anonymous">
 </head>
-<body class="container">
-
+<body class="d-flex flex-column h-100">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
+  <div class="container">
     <span class="navbar-brand"><i class="me-2 bi bi-wrench-adjustable-circle-fill"></i> {{ .title }}</span>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -56,33 +53,29 @@
         {{ end }}
       </ul>
     </div>
-
   </div>
-
 </nav>
 
-<br /><br />
+<main class="flex-shrink-0 mt-5">
+  <div class="container">
+    {{ if .success }}
+    <div class="alert alert-success alert-dismissible" role="alert">
+      {{ .success }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{ end }}
 
-{{ if .success }}
-<div class="alert alert-success alert-dismissible" role="alert">
-  {{ .success }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{{ end }}
+    {{ if .warning }}
+    <div class="alert alert-warning alert-dismissible" role="alert">
+      {{ .warning }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{ end }}
 
-{{ if .warning }}
-<div class="alert alert-warning alert-dismissible" role="alert">
-  {{ .warning }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{{ end }}
-
-{{ if .error }}
-<div class="alert alert-danger alert-dismissible" role="alert">
-  {{ .error }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{{ end }}
-
-
+    {{ if .error }}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      {{ .error }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{ end }}
 {{ end }}
