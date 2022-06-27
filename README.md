@@ -321,6 +321,12 @@ https://github.com/wagslane/go-password-validator
 
 ## Changelog
 
+Next v.4.x:
+  * Fix issue #4 with on password entropy. Thx to KaptinLin
+  * Improve UI. Thx to KaptinLin
+  * Add german translation. Thx to publicdesert
+  * More user fields Unix and Phone Numbers. Thx to loomanss (TODO: config options and tests)
+
 v1.4.2:
   * Add spanish translations. Thx to Iago Sardiña.
 
