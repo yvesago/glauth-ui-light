@@ -29,21 +29,23 @@ var rxName = regexp.MustCompile("^[a-z0-9]+$")
 var rxBadChar = regexp.MustCompile("[<>&*%$'«».,;:!` ]+")
 
 type UserForm struct {
-	UIDNumber     int
-	Name          string
-	Mail          string
-	SN            string
-	GivenName     string
-	Password      string
-	OTPSecret     string
-	OTPImg        string
-	PassAppBcrypt []string
-	NewPassApp    string
-	PrimaryGroup  int
-	OtherGroups   []int
-	Disabled      bool
-	Errors        map[string]string
-	Lang          string
+	UIDNumber     	int
+	Name          	string
+	Mail          	string
+	SN            	string
+	GivenName     	string
+	Telephone	string
+	Mobile		string
+	Password      	string
+	OTPSecret     	string
+	OTPImg        	string
+	PassAppBcrypt 	[]string
+	NewPassApp    	string
+	PrimaryGroup  	int
+	OtherGroups   	[]int
+	Disabled      	bool
+	Errors        	map[string]string
+	Lang          	string
 }
 
 func (userf *UserForm) CreateOTPimg(appname string) {
@@ -217,17 +219,19 @@ func UserEdit(c *gin.Context) {
 
 	u := Data.Users[k]
 	userf := UserForm{
-		UIDNumber:     u.UIDNumber,
-		Mail:          u.Mail,
-		Name:          u.Name,
-		PrimaryGroup:  u.PrimaryGroup,
-		OtherGroups:   u.OtherGroups,
-		SN:            u.SN,
-		GivenName:     u.GivenName,
-		Disabled:      u.Disabled,
-		OTPSecret:     u.OTPSecret,
-		PassAppBcrypt: u.PassAppBcrypt,
-		Lang:          lang,
+		UIDNumber:     	u.UIDNumber,
+		Mail:          	u.Mail,
+		Name:          	u.Name,
+		PrimaryGroup:  	u.PrimaryGroup,
+		OtherGroups:   	u.OtherGroups,
+		SN:            	u.SN,
+		GivenName:     	u.GivenName,
+		Telephone:	u.Telephone,
+		Mobile:		u.Mobile,
+		Disabled:      	u.Disabled,
+		OTPSecret:     	u.OTPSecret,
+		PassAppBcrypt: 	u.PassAppBcrypt,
+		Lang:          	lang,
 	}
 
 	if userf.OTPSecret != "" {
@@ -283,6 +287,8 @@ func UserUpdate(c *gin.Context) {
 		Name:          c.PostForm("inputName"),
 		SN:            c.PostForm("inputSN"),
 		GivenName:     c.PostForm("inputGivenName"),
+		Telephone:     c.PostForm("inputTelephone"),
+		Mobile:        c.PostForm("inputMobile"),
 		Password:      c.PostForm("inputPassword"),
 		OTPSecret:     c.PostForm("inputOTPSecret"),
 		NewPassApp:    c.PostForm("inputNewPassApp"),
@@ -310,6 +316,8 @@ func UserUpdate(c *gin.Context) {
 	(&Data.Users[k]).OtherGroups = og
 	(&Data.Users[k]).SN = userf.SN
 	(&Data.Users[k]).GivenName = userf.GivenName
+	(&Data.Users[k]).Telephone = userf.Telephone
+	(&Data.Users[k]).Mobile = userf.Mobile
 	(&Data.Users[k]).Mail = userf.Mail
 	(&Data.Users[k]).Disabled = d
 	(&Data.Users[k]).OTPSecret = userf.OTPSecret

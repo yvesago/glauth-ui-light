@@ -65,26 +65,27 @@ type Capability struct {
 	Object string `toml:"object,omitempty"`
 }
 type User struct {
-	Name          string       `toml:"name,omitempty"`
-	OtherGroups   []int        `toml:"othergroups,omitempty"`
-	PassSHA256    string       `toml:"passsha256,omitempty"`
-	PassBcrypt    string       `toml:"passbcrypt,omitempty"`
-	PassAppSHA256 []string     `toml:"passappsha256,omitempty"`
-	PassAppBcrypt []string     `toml:"passappbcrypt,omitempty"`
-	PrimaryGroup  int          `toml:"primarygroup,omitempty"`
-	Capabilities  []Capability `toml:"capabilities,omitempty"`
-	SSHKeys       []string     `toml:"sshkeys,omitempty"`
-	OTPSecret     string       `toml:"otpsecret,omitempty"`
-	Yubikey       string       `toml:"yubikey,omitempty"`
-	Disabled      bool         `toml:"disabled,omitempty"`
-	//	UnixID        int                    `toml:"unixid,omitempty"` // TODO: remove after deprecating UnixID on User and Group
-	UIDNumber   int                    `toml:"uidnumber,omitempty"`
-	Mail        string                 `toml:"mail,omitempty"`
-	LoginShell  string                 `toml:"loginShell,omitempty"`
-	GivenName   string                 `toml:"givenname,omitempty"`
-	SN          string                 `toml:"sn,omitempty"`
-	Homedir     string                 `toml:"homeDir,omitempty"`
-	CustomAttrs map[string]interface{} `toml:"customattrs,omitempty"`
+	Name          	string       `toml:"name,omitempty"`
+	OtherGroups   	[]int        `toml:"othergroups,omitempty"`
+	PassSHA256    	string       `toml:"passsha256,omitempty"`
+	PassBcrypt    	string       `toml:"passbcrypt,omitempty"`
+	PassAppSHA256 	[]string     `toml:"passappsha256,omitempty"`
+	PassAppBcrypt 	[]string     `toml:"passappbcrypt,omitempty"`
+	PrimaryGroup  	int          `toml:"primarygroup,omitempty"`
+	Capabilities  	[]Capability `toml:"capabilities,omitempty"`
+	SSHKeys       	[]string     `toml:"sshkeys,omitempty"`
+	OTPSecret     	string       `toml:"otpsecret,omitempty"`
+	Yubikey       	string       `toml:"yubikey,omitempty"`
+	Disabled      	bool         `toml:"disabled,omitempty"`
+	UIDNumber   	int                    `toml:"uidnumber,omitempty"`
+	Mail        	string                 `toml:"mail,omitempty"`
+	LoginShell  	string                 `toml:"loginShell,omitempty"`
+	GivenName   	string                 `toml:"givenname,omitempty"`
+	Telephone	string                 `toml:"telephonenumber,omitempty"`
+	Mobile      	string                 `toml:"mobile,omitempty"`
+	SN          	string                 `toml:"sn,omitempty"`
+	Homedir     	string                 `toml:"homeDir,omitempty"`
+	CustomAttrs 	map[string]interface{} `toml:"customattrs,omitempty"`
 }
 type Group struct {
 	Name string `toml:"name,omitempty"`
