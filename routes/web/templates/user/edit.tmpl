@@ -82,6 +82,44 @@
       {{ end }}
     </div>
   </div>
+  {{ if or .DefaultHomedir .u.Homedir }}
+  <div class="row mb-3">
+    <label for="inputHomedir" class="col-sm-2 col-form-label">{{ tr "Homedir" }}</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control {{ with .u.Errors.Homedir }}is-invalid{{ end }}" name="inputHomedir" id="inputHomedir"
+      {{ if .u.Homedir }}
+         value="{{ .u.Homedir }}"
+      {{ else }}
+         value="{{ .DefaultHomedir }}/{{ .u.Name }}"
+      {{ end }}
+      >
+      {{ with .u.Errors.Homedir }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  {{ end }}
+  {{ if or .DefaultLoginShell .u.LoginShell }}
+  <div class="row mb-3">
+    <label for="inputLoginShell" class="col-sm-2 col-form-label">{{ tr "LoginShell" }}</label>
+    <div class="col-sm-6">
+      <select class="form-select {{ with .u.Errors.LoginShell }}is-invalid{{ end }} " name="inputLoginShell" id="inputLoginShell" aria-label="select Login Shell">
+        {{ if .u.LoginShell }}
+        <option value="/bin/bash" {{if eq .u.LoginShell "/bin/bash"}}selected{{end}}>/bin/bash</option>
+        <option value="/bin/sh" {{if eq .u.LoginShell "/bin/sh"}}selected{{end}}>/bin/sh</option>
+        <option value="/bin/false" {{if eq .u.LoginShell "/bin/false"}}selected{{end}}>/bin/false</option>
+        {{ else }}
+        <option value="/bin/bash" {{if eq .DefaultLoginShell "/bin/bash"}}selected{{end}}>/bin/bash</option>
+        <option value="/bin/sh" {{if eq .DefaultLoginShell "/bin/sh"}}selected{{end}}>/bin/sh</option>
+        <option value="/bin/false" {{if eq .DefaultLoginShell "/bin/false"}}selected{{end}}>/bin/false</option>
+        {{ end }}
+      </select>
+      {{ with .u.Errors.LoginShell }}
+       <div class="invalid-feedback">{{ . }}</div>
+      {{ end }}
+    </div>
+  </div>
+  {{ end }}
   <div class="row mb-3">
     <label for="inputDisabled" class="col-sm-2 col-form-label">{{ tr "Disabled" }}</label>
     <div class="col-sm-6">

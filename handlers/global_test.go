@@ -170,6 +170,11 @@ func testCode(t *testing.T, router *gin.Engine, code string, session []*http.Coo
 func setConfigTest(cfg WebConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("Cfg", cfg)
+		// set values when auth is bypassed
+                c.Set("AppName", cfg.AppName)
+                c.Set("MaskOTP", cfg.MaskOTP)
+                c.Set("DefaultHomedir", cfg.DefaultHomedir)
+                c.Set("DefaultLoginShell", cfg.DefaultLoginShell)
 		c.Next()
 	}
 }

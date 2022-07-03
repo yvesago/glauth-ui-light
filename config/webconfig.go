@@ -6,20 +6,22 @@ type Ctmp struct {
 }
 
 type WebConfig struct {
-	AppName    string
-	AppDesc    string
-	MaskOTP    bool
-	Port       string
-	DBfile     string
-	Debug      bool
-	Tests      bool
-	Sec        Sec
-	SSL        SSL
-	Logs       Logs
-	Locale     Locale
-	PassPolicy PassPolicy
-	CfgUsers   CfgUsers
-	CfgGroups  CfgGroups
+	AppName           string
+	AppDesc           string
+	DefaultHomedir    string
+	DefaultLoginShell string
+	MaskOTP           bool
+	Port              string
+	DBfile            string
+	Debug             bool
+	Tests             bool
+	Sec               Sec
+	SSL               SSL
+	Logs              Logs
+	Locale            Locale
+	PassPolicy        PassPolicy
+	CfgUsers          CfgUsers
+	CfgGroups         CfgGroups
 }
 
 type Sec struct {

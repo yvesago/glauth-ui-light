@@ -136,6 +136,8 @@ func TestUserHandlers(t *testing.T) {
 		},
 		Debug: true,
 		Tests: true,
+		DefaultHomedir: "/home",
+		DefaultLoginShell: "/bin/false",
 		CfgUsers: CfgUsers{
 			Start:         5000,
 			GIDAdmin:      5501,
@@ -219,6 +221,15 @@ func TestUserHandlers(t *testing.T) {
 	assert.Equal(t, 1, len(matches), "1 result for user")
 	fmt.Printf("===\n%+v\n===\n", matches[0][1])
 	assert.Equal(t, "user2", matches[0][1], "Name user2")
+
+	// test ui for unix fields
+	//fmt.Println(resp.Body)
+	re = regexp.MustCompile(`/bin/false`)
+	matches = re.FindAllStringSubmatch(resp.Body.String(), -1)
+	assert.Equal(t, 2, len(matches), "2 /bin/false for user2")
+	re = regexp.MustCompile(`/home/user2`)
+	matches = re.FindAllStringSubmatch(resp.Body.String(), -1)
+	assert.Equal(t, 1, len(matches), "1 homedir result for user2")
 
 	// Delete one
 	fmt.Println("= http DELETE one User")

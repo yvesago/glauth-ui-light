@@ -32,6 +32,8 @@ type UserForm struct {
 	UIDNumber     int
 	Name          string
 	Mail          string
+	Homedir       string
+	LoginShell    string
 	SN            string
 	GivenName     string
 	Password      string
@@ -220,6 +222,8 @@ func UserEdit(c *gin.Context) {
 		UIDNumber:     u.UIDNumber,
 		Mail:          u.Mail,
 		Name:          u.Name,
+		Homedir:       u.Homedir,
+		LoginShell:    u.LoginShell,
 		PrimaryGroup:  u.PrimaryGroup,
 		OtherGroups:   u.OtherGroups,
 		SN:            u.SN,
@@ -281,6 +285,8 @@ func UserUpdate(c *gin.Context) {
 		UIDNumber:     Data.Users[k].UIDNumber,
 		Mail:          c.PostForm("inputMail"),
 		Name:          c.PostForm("inputName"),
+		Homedir:       c.PostForm("inputHomedir"),
+		LoginShell:    c.PostForm("inputLoginShell"),
 		SN:            c.PostForm("inputSN"),
 		GivenName:     c.PostForm("inputGivenName"),
 		Password:      c.PostForm("inputPassword"),
@@ -306,6 +312,8 @@ func UserUpdate(c *gin.Context) {
 	// Update Data
 	// updateUser := &Data.Users[k]
 	(&Data.Users[k]).Name = userf.Name
+	(&Data.Users[k]).Homedir = userf.Homedir
+	(&Data.Users[k]).LoginShell = userf.LoginShell
 	(&Data.Users[k]).PrimaryGroup = userf.PrimaryGroup
 	(&Data.Users[k]).OtherGroups = og
 	(&Data.Users[k]).SN = userf.SN
