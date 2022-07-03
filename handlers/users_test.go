@@ -2,7 +2,7 @@
 package handlers
 
 import (
-	//"bytes"
+	"bytes"
 	//"encoding/json"
 	"fmt"
 	"net/http"
@@ -45,6 +45,37 @@ func TestUserValidate(t *testing.T) {
 		fmt.Printf(" test Name «%s» : %s\n", s, tf.Errors["Name"])
 		assert.Equal(t, true, len(tf.Errors["Name"]) > 0, "set Name error")
 		assert.Equal(t, false, v, "bad Name form: "+tf.Errors["Name"])
+	}
+
+	var b bytes.Buffer
+	for i := 0; i < 130; i++ {
+		b.WriteString("a")
+	}
+
+	for _, s := range []string{"u<", "va;|2ieYeidafee8Gi0", b.String()} {
+		tf := UserForm{
+			Name:    "test",
+			Homedir: s,
+			Lang:    cfg.Locale.Lang,
+		}
+		v := tf.Validate(cfg.PassPolicy)
+		fmt.Printf(" test Homedir «%s» : %s\n", s, tf.Errors["Homedir"])
+		assert.Equal(t, true, len(tf.Errors["Homedir"]) > 0, "set Homedir error")
+		assert.Equal(t, false, v, "bad Homedir form: "+tf.Errors["Homedir"])
+	}
+
+	for _, s := range []string{"u", "va2ieYeidafee8Gi0", "/bin/bash"} {
+		tf := UserForm{
+			Name:       "test",
+			LoginShell: s,
+			Lang:       cfg.Locale.Lang,
+		}
+		v := tf.Validate(cfg.PassPolicy)
+		fmt.Printf(" test LoginShell «%s» : %s\n", s, tf.Errors["LoginShell"])
+		if s != "/bin/bash" {
+			assert.Equal(t, true, len(tf.Errors["LoginShell"]) > 0, "set LoginShell error")
+			assert.Equal(t, false, v, "bad LoginShell form: "+tf.Errors["LoginShell"])
+		}
 	}
 
 	for _, s := range []string{"u", "test", "va2ieYeidafee8Gi0"} {
@@ -134,9 +165,9 @@ func TestUserHandlers(t *testing.T) {
 			Lang: "en",
 			Path: "../locales/",
 		},
-		Debug: true,
-		Tests: true,
-		DefaultHomedir: "/home",
+		Debug:             true,
+		Tests:             true,
+		DefaultHomedir:    "/home",
 		DefaultLoginShell: "/bin/false",
 		CfgUsers: CfgUsers{
 			Start:         5000,

@@ -151,7 +151,29 @@ func (userf *UserForm) Validate(cfg PassPolicy) bool {
 		userf.Errors["UIDNumber"] = Tr(lang, "Unknown user")
 	}
 
+	matchBadHomedir := rxBadChar.MatchString(userf.Homedir)
+	if userf.Homedir != "" && len(userf.Homedir) > 128 {
+		userf.Errors["Homedir"] = Tr(lang, "Too long")
+	}
+	if userf.Homedir != "" && matchBadHomedir {
+		userf.Errors["Homedir"] = Tr(lang, "Bad character")
+	}
+
+	validLoginShell := []string{"/bin/bash","/bin/sh","/bin/false"}
+	if userf.LoginShell != "" && strContains(validLoginShell, userf.LoginShell) == false {
+		userf.Errors["LoginShell"] = Tr(lang, "Forbidden LoginShell")
+	}
+
 	return len(userf.Errors) == 0
+}
+
+func strContains(s []string, e string) bool {
+        for _, a := range s {
+                if a == e {
+                        return true
+                }
+        }
+        return false
 }
 
 // Helpers
