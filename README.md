@@ -84,6 +84,10 @@ port = "0.0.0.0:8080"
 appname = "glauth-ui-light"
 appdesc = "Manage users and groups for glauth ldap server"
 
+# optional default unix fields
+defaulthomedir = "/home"
+defaultloginshell = "/bin/false"
+
 [sec]
   # TODO set random secrets for CSRF token
   csrfrandom = "secret1"
@@ -321,11 +325,11 @@ https://github.com/wagslane/go-password-validator
 
 ## Changelog
 
-Next v.4.x:
+v1.4.3:
   * Fix issue #4 with on password entropy. Thx to KaptinLin
   * Improve UI. Thx to KaptinLin
   * Add german translation. Thx to publicdesert
-  * More user fields Unix and Phone Numbers. Thx to loomanss (TODO: config options and tests)
+  * Add user unix fields
 
 v1.4.2:
   * Add spanish translations. Thx to Iago Sardiña.
