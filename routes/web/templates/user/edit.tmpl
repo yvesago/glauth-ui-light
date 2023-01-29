@@ -193,6 +193,17 @@
       {{ end }}
     </div>
   </div>
+  {{ with len .u.SSHKeys }}
+  <div class="row mb-3">
+    <label for="inputSSHKeys" class="col-sm-2 col-form-label">{{ tr "SSHkeys" }}</label>
+    <div class="col-sm-6">
+      {{ . }} SSH key(s)
+      <div class="form-text">
+      SSH keys need to be managed in glauth file
+      </div>
+    </div>
+  </div>
+  {{ end }}
   <div class="container-fluid">
    <div class="d-flex justify-content-between">
     <div class="col-sm-6">

@@ -40,6 +40,7 @@ type UserForm struct {
 	OTPSecret     string
 	OTPImg        string
 	PassAppBcrypt []string
+	SSHKeys       []string
 	NewPassApp    string
 	PrimaryGroup  int
 	OtherGroups   []int
@@ -159,7 +160,7 @@ func (userf *UserForm) Validate(cfg PassPolicy) bool {
 		userf.Errors["Homedir"] = Tr(lang, "Bad character")
 	}
 
-	validLoginShell := []string{"/bin/bash","/bin/sh","/bin/false"}
+	validLoginShell := []string{"/bin/bash", "/bin/sh", "/bin/false"}
 	if userf.LoginShell != "" && strContains(validLoginShell, userf.LoginShell) == false {
 		userf.Errors["LoginShell"] = Tr(lang, "Forbidden LoginShell")
 	}
@@ -168,12 +169,12 @@ func (userf *UserForm) Validate(cfg PassPolicy) bool {
 }
 
 func strContains(s []string, e string) bool {
-        for _, a := range s {
-                if a == e {
-                        return true
-                }
-        }
-        return false
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
 
 // Helpers
@@ -253,6 +254,7 @@ func UserEdit(c *gin.Context) {
 		Disabled:      u.Disabled,
 		OTPSecret:     u.OTPSecret,
 		PassAppBcrypt: u.PassAppBcrypt,
+		SSHKeys:       u.SSHKeys,
 		Lang:          lang,
 	}
 
