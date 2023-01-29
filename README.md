@@ -84,6 +84,9 @@ port = "0.0.0.0:8080"
 appname = "glauth-ui-light"
 appdesc = "Manage users and groups for glauth ldap server"
 
+# Simplfy amdin ui when no need for otp
+maskotp = false
+
 # optional default unix fields
 defaulthomedir = "/home"
 defaultloginshell = "/bin/false"
@@ -325,6 +328,10 @@ https://github.com/wagslane/go-password-validator
 
 ## Changelog
 
+v1.4.4:
+  * Show SSH keys
+  * Fix Mask OTP
+
 v1.4.3:
   * Fix issue #4 with on password entropy. Thx to KaptinLin
   * Improve UI. Thx to KaptinLin
@@ -362,7 +369,7 @@ v1.0.0:
 
 MIT License
 
-Copyright (c) 2022 Yves Agostini
+Copyright (c) 2023 Yves Agostini
 
 <yves+github@yvesago.net>
 
