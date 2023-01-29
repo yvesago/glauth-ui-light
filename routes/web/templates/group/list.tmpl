@@ -28,7 +28,9 @@
 {{ tr "Special groups" }}:
 {{ tr "Admins" }} <i class="bi-star-fill text-warning"></i>,
 {{ tr "Users" }} <i class="bi-person"></i>,
+{{ if not .MaskOTP }}
 {{ tr "Can use OTP" }} <i class="bi-key"></i>
+{{ end }}
 </figcaption>
 </p>
 

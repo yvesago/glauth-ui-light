@@ -51,7 +51,9 @@
 	<ul>
           <li><i class="bi-star-fill text-warning"></i> {{ tr "Admins" }} : <strong>«{{ .groupsinfo.Admins }}» </strong>,</li>
           <li><i class="bi-person"></i> {{ tr "Users" }} : «{{ .groupsinfo.Users }}»,</li>
+          {{ if not .MaskOTP }}
           <li><i class="bi-key"></i> {{ tr "Can use OTP" }} : «{{ .groupsinfo.OTP }}»</li>
+          {{end}}
 	</ul>
     </div>
   </div>
